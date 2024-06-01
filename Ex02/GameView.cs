@@ -79,31 +79,72 @@ namespace GameInterface
         public void GetPlayerTurn(ref int o_RowChosen, ref int o_ColumnChosen, int i_NumOfRows, int i_NumOfColumns)
         {
             Console.Write("Choose a card (e.g., A1 or E3) or press Q to quit: ");
-            string playerInput;
-            char columnChosen;
-            int rowChosen;
 
             while (true)
             {
-                playerInput = Console.ReadLine().ToUpper();
+                string playerInput = Console.ReadLine().ToUpper();
 
                 if (playerInput == "Q")
                 {
-                    Environment.Exit(0); // Exit the program
+                    Environment.Exit(0); 
                 }
 
-                // Check bounds
-                if (playerInput.Length == 2 && char.IsLetter(playerInput[0]) && char.IsDigit(playerInput[1])
-                    && (columnChosen = playerInput[0]) >= 'A' && columnChosen < 'A' + i_NumOfColumns
-                    && int.TryParse(playerInput[1].ToString(), out rowChosen) && rowChosen >= 1 && rowChosen <= i_NumOfRows)
+                if (checkTurnInputValid(playerInput, i_NumOfRows, i_NumOfColumns, out o_RowChosen, out o_ColumnChosen))
                 {
-                    o_RowChosen = rowChosen - 1;
-                    o_ColumnChosen = columnChosen - 'A';
                     break;
                 }
 
-                Console.Write($"Invalid input. Choose a card (e.g., A1 or E3, within A-{(char)('A' + i_NumOfColumns - 1)} and 1-{i_NumOfRows}) or press Q to quit: ");
+                Console.Write($"Choose a card (e.g., A1 or E3, within A-{(char)('A' + i_NumOfColumns - 1)} and 1-{i_NumOfRows}) or press Q to quit: ");
             }
+        }
+
+        private bool checkTurnInputValid(string i_PlayerInput, int i_NumOfRows, int i_NumOfColumns, out int o_RowChosen, out int o_ColumnChosen)
+        {
+            o_RowChosen = -1;
+            o_ColumnChosen = -1;
+            bool isValid = true;
+
+            if (i_PlayerInput.Length != 2)
+            {
+                Console.WriteLine("Invalid input length. Please enter in the format ColRow (e.g., A1).");
+                isValid = false;
+            }
+            else
+            {
+                char columnChosen = i_PlayerInput[0];
+                char rowChar = i_PlayerInput[1];
+
+                if (!char.IsLetter(columnChosen))
+                {
+                    Console.WriteLine("Invalid column. The first character must be a letter.");
+                    isValid = false;
+                }
+                else if (!char.IsDigit(rowChar))
+                {
+                    Console.WriteLine("Invalid row. The second character must be a digit.");
+                    isValid = false;
+                }
+                else
+                {
+                    if (!int.TryParse(rowChar.ToString(), out int rowChosen) || rowChosen < 1 || rowChosen > i_NumOfRows)
+                    {
+                        Console.WriteLine($"Invalid row. The row must be within 1-{i_NumOfRows}.");
+                        isValid = false;
+                    }
+                    else if (columnChosen < 'A' || columnChosen >= 'A' + i_NumOfColumns)
+                    {
+                        Console.WriteLine($"Invalid column. The column must be within A-{(char)('A' + i_NumOfColumns - 1)}.");
+                        isValid = false;
+                    }
+                    else
+                    {
+                        o_RowChosen = rowChosen - 1;
+                        o_ColumnChosen = columnChosen - 'A';
+                    }
+                }
+            }
+
+            return isValid;
         }
 
         public void DisplayBoard(Board i_Board)
