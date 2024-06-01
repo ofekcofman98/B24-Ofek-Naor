@@ -11,6 +11,8 @@ namespace Ex02
         public static void Main()
         {
             System.Console.WriteLine("hey naor HRU?");
+
+
         }
     }
 }
