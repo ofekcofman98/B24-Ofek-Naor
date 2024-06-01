@@ -39,7 +39,7 @@ namespace GameLogics
             }
             set
             {
-                IsComputer = value;
+                m_IsComputer = value;
             }
         }
     }

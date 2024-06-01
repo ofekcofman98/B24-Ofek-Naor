@@ -1,18 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GameInterface;
+using GameLogics;
 
 namespace Ex02
 {
-    internal class Program
+    public class Program
     {
         public static void Main()
         {
-            System.Console.WriteLine("hey naor HRU?");
+            GameView game = new GameView();
+            game.WelcomeMessage();
+            game.GetPlayersDetails();
+            int rows = game.GetNumberOfRows();
+            int columns =  game.GetNumberOfColumns();
 
-
+            Board board = new Board(rows, columns);
+            game.DisplayBoard(board);
+            
         }
     }
 }

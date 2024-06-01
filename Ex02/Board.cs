@@ -20,7 +20,7 @@ namespace GameLogics
             BoardInitialization(); // Randomise letters (cards) 
         }
 
-        public Card[,] Card
+        public Card[,] Cards
         {
             get
             {
