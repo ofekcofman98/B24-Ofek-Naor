@@ -11,7 +11,7 @@ namespace Ex02
             game.WelcomeMessage();
             game.GetPlayersDetails();
             int rows = game.GetNumberOfRows();
-            int columns =  game.GetNumberOfColumns();
+            int columns =  game.GetNumberOfColumns(rows);
 
             Board board = new Board(rows, columns);
             game.DisplayBoard(board);

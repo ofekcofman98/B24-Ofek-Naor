@@ -13,7 +13,7 @@ namespace GameInterface
             Console.WriteLine("\n                             Welcome To The ");
             Console.WriteLine("\r\n  __  __                                    ____                        _ \r\n |  \\/  | ___ _ __ ___   ___  _ __ _   _   / ___| __ _ _ __ ___   ___  | |\r\n | |\\/| |/ _ \\ '_ ` _ \\ / _ \\| '__| | | | | |  _ / _` | '_ ` _ \\ / _ \\ | |\r\n | |  | |  __/ | | | | | (_) | |  | |_| | | |_| | (_| | | | | | |  __/ |_|\r\n |_|  |_|\\___|_| |_| |_|\\___/|_|   \\__, |  \\____|\\__,_|_| |_| |_|\\___| (_)\r\n                                   |___/                                  \r\n");
             Console.WriteLine();
-            Console.Write("                        Press Any Key To Continue ...");
+            Console.Write("                       Press Any Key To Continue ...");
             Console.ReadKey(true); 
             Screen.Clear();
         }
@@ -53,24 +53,24 @@ namespace GameInterface
         public int GetNumberOfRows()
         {
             int numOfRows;
-            Console.Write("Enter number of rows (4 or 6): ");
+            Console.Write("Enter number of rows (4 - 6): ");
 
-            while (!int.TryParse(Console.ReadLine(), out numOfRows) || (numOfRows != 4 && numOfRows != 6))
+            while (!int.TryParse(Console.ReadLine(), out numOfRows) || numOfRows < 4 || numOfRows > 6)
             {
-                Console.Write("Invalid input. Enter number of rows: ");
+                Console.Write("Invalid input. Enter number of rows (4 - 6): ");
             }
 
             return numOfRows;
         }
 
-        public int GetNumberOfColumns()
+        public int GetNumberOfColumns(int i_NumOfRows)
         {
             int numOfColumns;
-            Console.Write("Enter number of columns (4 or 6): ");
+            Console.Write("Enter number of columns (4 - 6): ");
 
-            while (!int.TryParse(Console.ReadLine(), out numOfColumns) || (numOfColumns != 4 && numOfColumns != 6))
+            while (!int.TryParse(Console.ReadLine(), out numOfColumns) || numOfColumns < 4 || numOfColumns > 6 || (numOfColumns * i_NumOfRows) % 2 != 0)
             {
-                Console.Write("Invalid input. Enter number of columns: ");
+                Console.Write("Invalid input. Ensure the total number of cards is even and columns are between 4 and 6: ");
             }
 
             return numOfColumns;
