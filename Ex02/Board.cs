@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace GameLogics
 {
@@ -41,7 +43,7 @@ namespace GameLogics
 
         public void BoardInitialization()
         {
-            Random rand = new Random();
+            Random randomGenerator = new Random();
             int numOfCards = m_NumOfRows * m_NumOfColumns;
             int numOfUniqueLetters = numOfCards / 2; // int for sure? even though we know numOfCards is even
 
@@ -57,14 +59,18 @@ namespace GameLogics
             int letterIndex;
             for (int i = 0; i < numOfUniqueLetters; i++)
             {
-                letterIndex = rand.Next(0, lettersList.Count);
-                lettersInGameList.Add(lettersList[letterIndex]); // efficient?
-                lettersInGameList.Add(lettersList[letterIndex]); // efficient?
+                letterIndex = randomGenerator.Next(0, lettersList.Count);
+                char selectedLetter = lettersList[letterIndex];
+
+                lettersInGameList.Add(selectedLetter); // efficient?
+                lettersInGameList.Add(selectedLetter); // efficient?
+                
                 lettersList.RemoveAt(letterIndex);               // efficient?
             }
 
             // shuffle the list
-
+            ShuffleList(lettersInGameList);
+            
             letterIndex = 0;
             for (int row = 0; row < m_NumOfRows; row++)
             {
@@ -74,6 +80,25 @@ namespace GameLogics
                 }
 
             }
+        }
+
+        public static void ShuffleList<T>(List<T> i_List)
+        {
+            Random randomGenerator = new Random();
+            int listSize = i_List.Count;
+            while (listSize > 1) // 0?
+            {
+                listSize--;
+                int randomIndex = randomGenerator.Next(listSize + 1);
+                T tempVariable = i_List[listSize];
+                i_List[listSize] = i_List[randomIndex];
+                i_List[randomIndex] = tempVariable;
+
+            }
+        }
+        public static void PrintBoard(Card[,] i_CardsMatrix)
+        {
+            
         }
     }
 }
