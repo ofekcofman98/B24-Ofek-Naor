@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameLogics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,8 @@ namespace Ex02
         public static void Main()
         {
             System.Console.WriteLine("hey naor HRU?");
-
+            Board b = new Board(5, 6);
+            b.BoardInitialization();
 
         }
     }
