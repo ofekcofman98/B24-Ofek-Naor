@@ -9,6 +9,12 @@ namespace GameLogics
         private eCardStatus m_CardStatus;
         // private Card m_pair;
 
+        public Card(char i_Letter)
+        {
+            m_Letter = i_Letter;
+            m_CardStatus = eCardStatus.FacedDown;
+        }
+
         public char Letter
         {
             get
@@ -23,17 +29,25 @@ namespace GameLogics
             {
                 return m_CardStatus;
             }
-            set
+            private set
             {
                 m_CardStatus = value;
             }
         }
 
-        public Card(char i_Letter)
+        public void FlipUp()
         {
-            m_Letter = i_Letter;
-            m_CardStatus = eCardStatus.FacedDown;
+            CardStatus = eCardStatus.CurrentlyFacedUp;
+        }
+
+        public void FlipDown()
+        {
+            CardStatus = eCardStatus.FacedDown;
+        }
+
+        public void RevealPermanently()
+        {
+            CardStatus = eCardStatus.PermanentlyFacedUp;
         }
     }
-
 }
