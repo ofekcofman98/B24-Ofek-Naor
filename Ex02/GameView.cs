@@ -1,14 +1,94 @@
 ﻿using System;
 using GameLogics;
 using Ex02.ConsoleUtils;
+using GameControl;
 
 namespace GameInterface
 {
     public class GameView
     {
         private const int k_NumOfPlayers = 2;
+        private const int k_AddedPointsForMatchedCards = 10;
 
-        public void WelcomeMessage()
+
+        private GameController m_MemoryGame;
+        public void StartGame()
+        {
+            welcomeMessage();
+
+            bool continuePlaying = true;
+
+            m_MemoryGame.Players = getPlayersDetails();
+
+            while (continuePlaying)
+            {
+                getGameSettings();
+                startNewRound(); // TO DO
+                printGameResults();
+                continuePlaying = checkIfPlayerWantsAnotherRound(); // TO DO
+
+            }
+        }
+
+        private void getGameSettings()
+        {
+            getNumberOfRows(out int numOfRows);
+            getNumberOfColumns(numOfRows, out int numOfColumns);
+            m_MemoryGame.CreateNewRound(numOfRows, numOfColumns); // TO DO (create members for GameController etc)
+        }
+
+        private void startNewRound() 
+        {
+            while(!m_MemoryGame.IsRoundOver)
+            {
+                printPlayerTurn(); // TO DO
+                displayBoard(m_MemoryGame.Board);
+                getPlayerTurn(out int rowChosen1, out int columnChosen1, m_MemoryGame.Board.NumOfRows, m_MemoryGame.Board.NumOfColumns);
+                m_MemoryGame.Board.Cards[rowChosen1, columnChosen1].FlipUp();
+                displayBoard(m_MemoryGame.Board);
+
+                getPlayerTurn(out int rowChosen2, out int columnChosen2, m_MemoryGame.Board.NumOfRows, m_MemoryGame.Board.NumOfColumns);
+                m_MemoryGame.Board.Cards[rowChosen2, columnChosen2].FlipUp();
+                displayBoard(m_MemoryGame.Board);
+
+                tryMatchCards(rowChosen1, columnChosen1, rowChosen2, columnChosen2);
+                m_MemoryGame.CheckForWinner();
+            }
+        }
+
+        private void printPlayerTurn()
+        {
+
+        }
+
+        private void tryMatchCards(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
+        {
+            if(m_MemoryGame.AreCardsMatched(i_RowChosen1, i_ColumnChosen1, i_RowChosen2, i_RowChosen2))
+            {
+                Console.WriteLine($"Cards are Matched! 10 Points added to {m_MemoryGame.Players[m_MemoryGame.CurrentPlayerTurn % k_NumOfPlayers].Name}");
+                m_MemoryGame.Board.Cards[i_RowChosen1, i_ColumnChosen1].RevealPermanently();
+                m_MemoryGame.Board.Cards[i_RowChosen2, i_ColumnChosen2].RevealPermanently();
+                m_MemoryGame.Players[m_MemoryGame.CurrentPlayerTurn % k_NumOfPlayers].Score += k_AddedPointsForMatchedCards;
+            }
+            else
+            {
+                Console.WriteLine("Cards are not matched!");
+                m_MemoryGame.Board.Cards[i_RowChosen1, i_ColumnChosen1].FlipDown();
+                m_MemoryGame.Board.Cards[i_RowChosen2, i_ColumnChosen2].FlipDown();
+            }
+        }
+
+        private bool checkIfPlayerWantsAnotherRound()
+        {
+
+        }
+
+        private void printGameResults()
+        {
+
+        }
+
+        private void welcomeMessage()
         {
             Console.WriteLine("\n                             Welcome To The ");
             Console.WriteLine("\r\n  __  __                                    ____                        _ \r\n |  \\/  | ___ _ __ ___   ___  _ __ _   _   / ___| __ _ _ __ ___   ___  | |\r\n | |\\/| |/ _ \\ '_ ` _ \\ / _ \\| '__| | | | | |  _ / _` | '_ ` _ \\ / _ \\ | |\r\n | |  | |  __/ | | | | | (_) | |  | |_| | | |_| | (_| | | | | | |  __/ |_|\r\n |_|  |_|\\___|_| |_| |_|\\___/|_|   \\__, |  \\____|\\__,_|_| |_| |_|\\___| (_)\r\n                                   |___/                                  \r\n");
@@ -19,7 +99,7 @@ namespace GameInterface
         }
 
 
-        public Player[] GetPlayersDetails()
+        private Player[] getPlayersDetails()
         {
             Player[] playersArray = new Player[k_NumOfPlayers];
 
@@ -50,33 +130,29 @@ namespace GameInterface
             return playersArray;
         }
 
-        public int GetNumberOfRows()
+        private void getNumberOfRows(out int io_NumOfRows)
         {
-            int numOfRows;
             Console.Write("Enter number of rows (4 - 6): ");
-
-            while (!int.TryParse(Console.ReadLine(), out numOfRows) || numOfRows < 4 || numOfRows > 6)
+            // Move dimensions check to logic
+            while (!int.TryParse(Console.ReadLine(), out io_NumOfRows) || io_NumOfRows < 4 || io_NumOfRows > 6)
             {
                 Console.Write("Invalid input. Enter number of rows (4 - 6): ");
             }
-
-            return numOfRows;
         }
 
-        public int GetNumberOfColumns(int i_NumOfRows)
+        private int getNumberOfColumns(int i_NumOfRows, out int io_NumOfColumns)
         {
-            int numOfColumns;
             Console.Write("Enter number of columns (4 - 6): ");
-
-            while (!int.TryParse(Console.ReadLine(), out numOfColumns) || numOfColumns < 4 || numOfColumns > 6 || (numOfColumns * i_NumOfRows) % 2 != 0)
+            // Move dimensions check to logic
+            while (!int.TryParse(Console.ReadLine(), out io_NumOfColumns) || io_NumOfColumns < 4 || io_NumOfColumns > 6 || (io_NumOfColumns * i_NumOfRows) % 2 != 0)
             {
                 Console.Write("Invalid input. Ensure the total number of cards is even and columns are between 4 and 6: ");
             }
 
-            return numOfColumns;
+            return io_NumOfColumns;
         }
 
-        public void GetPlayerTurn(ref int o_RowChosen, ref int o_ColumnChosen, int i_NumOfRows, int i_NumOfColumns)
+        private void getPlayerTurn(out int o_RowChosen, out int o_ColumnChosen, int i_NumOfRows, int i_NumOfColumns)
         {
             Console.Write("Choose a card (e.g., A1 or E3) or press Q to quit: ");
 
@@ -125,7 +201,7 @@ namespace GameInterface
                     isValid = false;
                 }
                 else
-                {
+                { // Move to logics 
                     if (!int.TryParse(rowChar.ToString(), out int rowChosen) || rowChosen < 1 || rowChosen > i_NumOfRows)
                     {
                         Console.WriteLine($"Invalid row. The row must be within 1-{i_NumOfRows}.");
@@ -134,6 +210,11 @@ namespace GameInterface
                     else if (columnChosen < 'A' || columnChosen >= 'A' + i_NumOfColumns)
                     {
                         Console.WriteLine($"Invalid column. The column must be within A-{(char)('A' + i_NumOfColumns - 1)}.");
+                        isValid = false;
+                    }
+                    else if(m_MemoryGame.CheckIfCardRevealed(rowChosen, columnChosen - 'A' + 1))
+                    {
+                        Console.WriteLine("Card is already revealed, please choose a card that has yet to be revealed.");
                         isValid = false;
                     }
                     else
@@ -147,7 +228,7 @@ namespace GameInterface
             return isValid;
         }
 
-        public void DisplayBoard(Board i_Board)
+        private void displayBoard(Board i_Board)
         {
             // Display column headers
             Console.Write("   ");
