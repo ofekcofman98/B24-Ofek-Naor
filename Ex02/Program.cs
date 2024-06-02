@@ -18,11 +18,8 @@ namespace Ex02
             game.GetPlayersDetails();
             int rows = game.GetNumberOfRows();
             int columns =  game.GetNumberOfColumns(rows);
-            System.Console.WriteLine("hey naor HRU?");
-            Board b = new Board(5, 6);
-            b.BoardInitialization();
-
             Board board = new Board(rows, columns);
+
             game.DisplayBoard(board);
             
         }

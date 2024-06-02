@@ -174,6 +174,7 @@ namespace GameInterface
                 for (int col = 0; col < i_Board.NumOfColumns; col++)
                 {
                     Card cardToPrint = i_Board.Cards[row, col];
+
                     if (cardToPrint.CardStatus == eCardStatus.CurrentlyFacedUp || cardToPrint.CardStatus == eCardStatus.PermanentlyFacedUp)
                     {
                         Console.Write($" {cardToPrint.Letter} |");
