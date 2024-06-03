@@ -1,6 +1,7 @@
 ﻿using System;
 using GameLogics;
 using Ex02.ConsoleUtils;
+using System.Collections.Generic;
 
 namespace GameInterface
 {
@@ -174,9 +175,12 @@ namespace GameInterface
                 for (int col = 0; col < i_Board.NumOfColumns; col++)
                 {
                     Card cardToPrint = i_Board.Cards[row, col];
-                    if (cardToPrint.CardStatus == eCardStatus.CurrentlyFacedUp || cardToPrint.CardStatus == eCardStatus.PermanentlyFacedUp)
+                    if (cardToPrint.CardStatus == eCardStatus.CurrentlyFacedUp || cardToPrint.CardStatus == eCardStatus.PermanentlyFacedUp || cardToPrint.CardStatus == eCardStatus.FacedDown)
                     {
-                        Console.Write($" {cardToPrint.Letter} |");
+                        //Console.Write($" {cardToPrint.id} |");
+                        char displayChar = (char)('A' + cardToPrint.id);
+                        Console.Write($" {displayChar} |");
+
                     }
                     else
                     {
