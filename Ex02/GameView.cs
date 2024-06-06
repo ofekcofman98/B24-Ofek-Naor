@@ -219,6 +219,7 @@ namespace GameInterface
                     Console.WriteLine("Invalid column. The first character must be a letter.");
                     isValid = false;
                 }
+
                 else if (!char.IsDigit(rowChar))
                 {
                     Console.WriteLine("Invalid row. The second character must be a digit.");
