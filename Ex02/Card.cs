@@ -35,7 +35,13 @@ namespace GameLogics
                 m_CardStatus = value;
             }
         }
+        public bool IsFacedUp()
+        {
+            return (eCardStatus.CurrentlyFacedUp == CardStatus) || (eCardStatus.PermanentlyFacedUp == CardStatus)
+
+        }
         
+
         public void FlipUp()
         {
             CardStatus = eCardStatus.CurrentlyFacedUp;

@@ -28,8 +28,11 @@ namespace GameControl
 
         public bool CheckIfCardRevealed(int i_RowChosen, int i_ColumnChosen)
         {
-            return m_Board.Cards[i_RowChosen, i_ColumnChosen].CardStatus == eCardStatus.PermanentlyFacedUp
-                      || m_Board.Cards[i_RowChosen, i_ColumnChosen].CardStatus == eCardStatus.CurrentlyFacedUp;
+ //           return m_Board.Cards[i_RowChosen, i_ColumnChosen].CardStatus == eCardStatus.PermanentlyFacedUp
+ //                     || m_Board.Cards[i_RowChosen, i_ColumnChosen].CardStatus == eCardStatus.CurrentlyFacedUp;
+
+            return m_Board.Cards[i_RowChosen, i_ColumnChosen].IsFacedUp();
+        }
         
         public bool AreCardsMatched(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
         {
@@ -53,7 +56,7 @@ namespace GameControl
             m_Board.Cards[i_RowChosen, i_ColumnChosen].FlipUp();
         }
 
-        public void SuccessfullMatch(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
+        public void SuccessfullMatch(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2) // change name 
         {
             Board.Cards[i_RowChosen1, i_ColumnChosen1].RevealPermanently(); 
             Board.Cards[i_RowChosen2, i_ColumnChosen2].RevealPermanently();

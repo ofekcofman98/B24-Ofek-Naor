@@ -17,3 +17,8 @@ C:\Users\user\Source\Repos\ofekcofman98\B24-Ofek-Naor\Ex02\obj\Debug\Ex02.pdb
 C:\Users\user\Source\Repos\ofekcofman98\B24-Ofek-Naor\Ex02\bin\Debug\Ex02.ConsoleUtils.dll
 C:\Users\user\Source\Repos\ofekcofman98\B24-Ofek-Naor\Ex02\obj\Debug\Ex02.csproj.CopyComplete
 C:\Users\Ofek Cofman\source\repos\B24 Ofek Naor\Ex02\obj\Debug\Ex02.csproj.CopyComplete
+C:\Users\Ofek Cofman\Source\Repos\ofekcofman98\B24-Ofek-Naor\Ex02\obj\Debug\Ex02.csproj.AssemblyReference.cache
+C:\Users\Ofek Cofman\Source\Repos\ofekcofman98\B24-Ofek-Naor\Ex02\obj\Debug\Ex02.csproj.SuggestedBindingRedirects.cache
+C:\Users\Ofek Cofman\Source\Repos\ofekcofman98\B24-Ofek-Naor\Ex02\obj\Debug\Ex02.csproj.CoreCompileInputs.cache
+C:\Users\Ofek Cofman\Source\Repos\ofekcofman98\B24-Ofek-Naor\Ex02\obj\Debug\Ex02.exe
+C:\Users\Ofek Cofman\Source\Repos\ofekcofman98\B24-Ofek-Naor\Ex02\obj\Debug\Ex02.pdb
