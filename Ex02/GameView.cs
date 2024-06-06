@@ -11,7 +11,6 @@ namespace GameInterface
         private const int k_NumOfPlayers = 2;
         private const int k_MaximumBoardSize = 6;
         private const int k_MinimumBoardSize = 4;
-        private const int k_AddedPointsForMatchedCards = 1;
 
         private GameController m_MemoryGame;
 
@@ -53,14 +52,14 @@ namespace GameInterface
                 printPlayerTurn(); 
                 displayBoard(m_MemoryGame.Board);
                 getPlayerTurn(out int rowChosen1, out int columnChosen1, m_MemoryGame.Board.NumOfRows, m_MemoryGame.Board.NumOfColumns);
-                m_MemoryGame.PermenantlyFlipUp(rowChosen1, columnChosen1);
+                m_MemoryGame.FlipUpCard(rowChosen1, columnChosen1);
 
                 // Duplication of code !!!!
                 Screen.Clear(); // Maybe move onto displayBoard() ?
                 printPlayerTurn();
                 displayBoard(m_MemoryGame.Board);
                 getPlayerTurn(out int rowChosen2, out int columnChosen2, m_MemoryGame.Board.NumOfRows, m_MemoryGame.Board.NumOfColumns);
-                m_MemoryGame.PermenantlyFlipUp(rowChosen2, columnChosen2);
+                m_MemoryGame.FlipUpCard(rowChosen2, columnChosen2);
                 Screen.Clear();
                 printPlayerTurn();
                 displayBoard(m_MemoryGame.Board);
@@ -72,6 +71,7 @@ namespace GameInterface
 
         private void printPlayerTurn()
         {
+            // simplize player name
             Console.WriteLine($"Now it is {m_MemoryGame.Players[m_MemoryGame.CurrentPlayerTurn].Name}'s turn: \n");
         }
 
@@ -80,12 +80,12 @@ namespace GameInterface
             if(m_MemoryGame.AreCardsMatched(i_RowChosen1, i_ColumnChosen1, i_RowChosen2, i_ColumnChosen2))
             {
                 Console.WriteLine($"Cards are Matched! 1 Points added to {m_MemoryGame.Players[m_MemoryGame.CurrentPlayerTurn].Name}");
-                m_MemoryGame.SuccessfullMatch(i_RowChosen1, i_ColumnChosen1, i_RowChosen2, i_ColumnChosen2);
+                m_MemoryGame.ExecuteSuccessfullMatch(i_RowChosen1, i_ColumnChosen1, i_RowChosen2, i_ColumnChosen2);
             }
             else
             {
                 Console.WriteLine("Cards are not matched!");
-                m_MemoryGame.FailedMatch(i_RowChosen1, i_ColumnChosen1, i_RowChosen2, i_ColumnChosen2);
+                m_MemoryGame.ExecuteFailedMatch(i_RowChosen1, i_ColumnChosen1, i_RowChosen2, i_ColumnChosen2);
                 Thread.Sleep(2000);
             }
         }
@@ -186,9 +186,9 @@ namespace GameInterface
 
                 if (playerInput == "Q")
                 {
-                    Environment.Exit(0); 
+                    Environment.Exit(0); // need to change!!! no exit
                 }
-
+                // logic should already have board's dimensions!!! 
                 if (checkTurnInputValid(playerInput, i_NumOfRows, i_NumOfColumns, out o_RowChosen, out o_ColumnChosen))
                 {
                     break;
@@ -282,7 +282,8 @@ namespace GameInterface
 
                     if (cardToPrint.CardStatus == eCardStatus.CurrentlyFacedUp || cardToPrint.CardStatus == eCardStatus.PermanentlyFacedUp)
                     {
-                        Console.Write($" {cardToPrint.Letter} |");
+                        char displayChar = (char)('A' + cardToPrint.ID);
+                        Console.Write($" {displayChar} |");
                     }
                     else
                     {

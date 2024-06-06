@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Metadata;
 using System.Threading;
 
 namespace GameLogics
@@ -17,9 +18,9 @@ namespace GameLogics
             m_NumOfRows = i_NumOfRows;
             m_NumOfColumns = i_NumOfColumns;
             m_CardsMatrix = new Card[m_NumOfRows, m_NumOfColumns];
-            
 
-            BoardInitialization(); // Randomise letters (cards) 
+
+            BoardInitialization(26); // Randomise letters (cards) 
         }
 
         public Card[,] Cards
@@ -41,46 +42,47 @@ namespace GameLogics
             set { m_NumOfColumns = value; }
         }
 
-        public void BoardInitialization()
+
+        public void BoardInitialization(int i_Range)
         {
             Random randomGenerator = new Random();
             int numOfCards = m_NumOfRows * m_NumOfColumns;
-            int numOfUniqueLetters = numOfCards / 2; // int for sure? even though we know numOfCards is even
+            int numOfUniqueId = numOfCards / 2; // int for sure? even though we know numOfCards is even
 
-            List<char> lettersList = new List<char>(26);        // define for 26
-            List<char> lettersInGameList = new List<char>(numOfCards);
+            List<int> idDomainList = new List<int>(i_Range);        // define for 26
+            List<int> idInGameList = new List<int>(numOfCards);
 
-
-            for (char letter = 'A'; letter <= 'Z'; letter++)
+            for (int i = 0; i < i_Range; i++)
             {
-                lettersList.Add(letter);
+                idDomainList.Add(i);
             }
 
-            int letterIndex;
-            for (int i = 0; i < numOfUniqueLetters; i++)
-            {
-                letterIndex = randomGenerator.Next(0, lettersList.Count);
-                char selectedLetter = lettersList[letterIndex];
 
-                lettersInGameList.Add(selectedLetter); // efficient?
-                lettersInGameList.Add(selectedLetter); // efficient?
-                
-                lettersList.RemoveAt(letterIndex);               // efficient?
+            for (int i = 0; i < numOfUniqueId; i++)
+            {
+                int randomIndex = randomGenerator.Next(0, idDomainList.Count);
+                int randomId = idDomainList[randomIndex];
+
+                idInGameList.Add(randomId); // Add the ID twice to the game list
+                idInGameList.Add(randomId);
+
+                idDomainList.RemoveAt(randomIndex); // Remove the ID from the domain list
             }
 
             // shuffle the list
-            ShuffleList(lettersInGameList);
-            
-            letterIndex = 0;
+            ShuffleList(idInGameList);
+
+            int cardId = 0;
             for (int row = 0; row < m_NumOfRows; row++)
             {
-                for (int col = 0; col  < m_NumOfColumns; col ++)
+                for (int col = 0; col < m_NumOfColumns; col++)
                 {
-                    m_CardsMatrix[row, col] = new Card(lettersInGameList[letterIndex++]);
+                    m_CardsMatrix[row, col] = new Card(idInGameList[cardId++]);
                 }
 
             }
         }
+
 
         public static void ShuffleList<T>(List<T> i_List)
         {
@@ -98,7 +100,7 @@ namespace GameLogics
         }
         public static void PrintBoard(Card[,] i_CardsMatrix)
         {
-            
+
         }
     }
 }

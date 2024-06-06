@@ -29,14 +29,13 @@ namespace GameControl
 
         public bool CheckIfCardRevealed(int i_RowChosen, int i_ColumnChosen)
         {
-            return m_Board.Cards[i_RowChosen, i_ColumnChosen].CardStatus == eCardStatus.PermanentlyFacedUp
-                      || m_Board.Cards[i_RowChosen, i_ColumnChosen].CardStatus == eCardStatus.CurrentlyFacedUp;
+            return m_Board.Cards[i_RowChosen, i_ColumnChosen].IsFacedUp();
         }
 
         public bool AreCardsMatched(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
         {
-            return m_Board.Cards[i_RowChosen1, i_ColumnChosen1].Letter
-                   == m_Board.Cards[i_RowChosen2, i_ColumnChosen2].Letter;
+            return m_Board.Cards[i_RowChosen1, i_ColumnChosen1].ID
+                   == m_Board.Cards[i_RowChosen2, i_ColumnChosen2].ID;
         }
 
         public void CheckForWinner()
@@ -51,23 +50,25 @@ namespace GameControl
             m_IsRoundOver = totalScoreOfAllPlayers == (m_Board.NumOfColumns * m_Board.NumOfRows) / 2; // FIX TO "m_NumOfPairs"
         }
 
-        public void PermenantlyFlipUp(int i_RowChosen, int i_ColumnChosen)
+        public void FlipUpCard(int i_RowChosen, int i_ColumnChosen)
         {
             m_Board.Cards[i_RowChosen, i_ColumnChosen].FlipUp();
         }
 
-        public void SuccessfullMatch(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
+        public void ExecuteSuccessfullMatch(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
         {
             Board.Cards[i_RowChosen1, i_ColumnChosen1].RevealPermanently(); 
             Board.Cards[i_RowChosen2, i_ColumnChosen2].RevealPermanently();
             Players[m_CurrentPlayerTurn].Score += k_AddedPointsForMatchedCards; 
         }
 
-        public void FailedMatch(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
+        public void ExecuteFailedMatch(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
         {
             Board.Cards[i_RowChosen1, i_ColumnChosen1].FlipDown();  
             Board.Cards[i_RowChosen2, i_ColumnChosen2].FlipDown();
             m_CurrentPlayerTurn = (m_CurrentPlayerTurn + 1) % Players.Length;
+            // check if player[current] == computer
+            // perform computer move
         }
 
         public Player[] Players

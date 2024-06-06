@@ -5,21 +5,21 @@ namespace GameLogics
 {
     public struct Card  // Class?
     {
-        private char m_Letter; // eNum of letters? 
+        private int m_CardId;
         private eCardStatus m_CardStatus;
         // private Card m_pair;
 
-        public Card(char i_Letter)
+        public Card(int i_CardId)
         {
-            m_Letter = i_Letter;
+            m_CardId = i_CardId;
             m_CardStatus = eCardStatus.FacedDown;
         }
 
-        public char Letter
+        public int ID
         {
             get
             {
-                return m_Letter;
+                return m_CardId;
             }
         }
 
@@ -33,6 +33,11 @@ namespace GameLogics
             {
                 m_CardStatus = value;
             }
+        }
+
+        public bool IsFacedUp()
+        {
+            return (eCardStatus.CurrentlyFacedUp == CardStatus) || (eCardStatus.PermanentlyFacedUp == CardStatus);
         }
 
         public void FlipUp()
