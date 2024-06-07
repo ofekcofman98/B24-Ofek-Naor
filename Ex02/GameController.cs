@@ -3,12 +3,15 @@ using GameInterface;
 using System.Collections.Generic;
 using System;
 using System.Runtime.InteropServices;
+using System.Collections;
+using System.Diagnostics.Eventing.Reader;
 
 namespace GameControl
 {
     public class GameController
     {
         private const int k_AddedPointsForMatchedCards = 1;
+        private const int k_OpponentPlayerIndex = 1;
 
         private Player[] m_Players;
         private Board m_Board;
@@ -77,17 +80,58 @@ namespace GameControl
         }
         public void ExecuteFailedMatch(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
         {
-            Board.Cards[i_RowChosen1, i_ColumnChosen1].FlipDown();  
+            Board.Cards[i_RowChosen1, i_ColumnChosen1].FlipDown();
             Board.Cards[i_RowChosen2, i_ColumnChosen2].FlipDown();
             ChangePlayer();
             if (Players[m_CurrentPlayerTurn].IsComputer)
             {
                 ComputerTurn();
             }
+            int card1Id = Board.Cards[i_RowChosen1, i_ColumnChosen1].ID;
+            int card2Id = Board.Cards[i_RowChosen2, i_ColumnChosen2].ID;
+            int indexOfCard1 = FindIndexFromChoosing(i_RowChosen1, i_ColumnChosen1);
+            int indexOfCard2 = FindIndexFromChoosing(i_RowChosen2, i_ColumnChosen2);
+
+            if (Players[k_OpponentPlayerIndex].IsComputer)
+            {
+                ComputerRememberTurn(card1Id, indexOfCard1);
+                ComputerRememberTurn(card2Id, indexOfCard2);
+            }
             // check if player[current] == computer:
             //      remember those cards 
             //      computer turn 
             // perform computer move
+        }
+
+        public void ComputerRememberTurn(int cardId, int i_IndexOfCard)
+        {
+            int n = Players[k_OpponentPlayerIndex].ComputerAiMemoryList[cardId].Index1 ?? i_IndexOfCard;
+
+            //if (IsCardIndexInAiMemory(cardId, out int o_CardIndex))
+            //{
+                ////Players[k_OpponentPlayerIndex].ComputerAiMemoryList[0]
+            //}
+            //else
+            //{
+                //CardsWithIndex = new CardsWithIndex(cardId,in)
+                //Players[k_OpponentPlayerIndex].ComputerAiMemoryList.Add()
+            //}
+        }
+
+        public bool IsCardIndexInAiMemory(int i_CardId, out int o_CardIndex)
+        {
+            //bool v_IsCardIndexInList = false;
+            //o_CardIndex = -1;
+            //for (int i = 0; i < Players[k_OpponentPlayerIndex].ComputerAiMemoryList.Count; i++)
+            //{
+            //    if (Players[k_OpponentPlayerIndex].ComputerAiMemoryList[i].ID == i_CardId)
+            //    {
+            //        v_IsCardIndexInList = true;
+            //        o_CardIndex = i;
+            //        break;
+            //    }
+            //}
+            //return v_IsCardIndexInList;
         }
 
         public int FindIndexFromChoosing(int i_Row, int i_Col)
@@ -100,6 +144,10 @@ namespace GameControl
         {
             Random randomGenerator = new Random();
             int index1 = randomGenerator.Next(m_FacedDownCardIndexList.Count);
+            //if (IsCardIndexInAiMemory())
+            //{
+
+            //}
             int index2;
             do
             {
@@ -110,8 +158,14 @@ namespace GameControl
             int col1 = FindColFromIndex(index1);
             int row2 = FindRowFromIndex(index2);
             int col2 = FindColFromIndex(index2);
-            AreCardsMatched(row1, col1, row2, col2);
-            ExecuteSuccessfullMatch(row1, col1, row2, col2);
+            if (AreCardsMatched(row1, col1, row2, col2))
+            {
+                ExecuteSuccessfullMatch(row1, col1, row2, col2);
+            }
+            else
+            {
+                ExecuteFailedMatch(row1, col1, row2, col2);
+            }
         }
         public int FindRowFromIndex(int index)
         {

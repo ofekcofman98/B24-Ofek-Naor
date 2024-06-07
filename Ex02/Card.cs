@@ -1,5 +1,4 @@
-﻿
-using Ex02;
+﻿using Ex02;
 
 namespace GameLogics
 {

@@ -3,6 +3,7 @@ using GameLogics;
 using Ex02.ConsoleUtils;
 using GameControl;
 using System.Threading;
+using System.Runtime.Remoting.Activation;
 
 namespace GameInterface
 {
@@ -51,26 +52,31 @@ namespace GameInterface
             {
                 // code is duplicated
                 // one method of player1 turn
-                
-                Screen.Clear();
-                printPlayerTurn(); 
-                displayBoard(m_MemoryGame.Board);
-                getPlayerTurn(out int rowChosen1, out int columnChosen1, m_MemoryGame.Board.NumOfRows, m_MemoryGame.Board.NumOfColumns);
-                m_MemoryGame.FlipUpCard(rowChosen1, columnChosen1);
-
-                // Duplication of code !!!!
-                Screen.Clear(); // Maybe move onto displayBoard() ?
-                printPlayerTurn();
-                displayBoard(m_MemoryGame.Board);
-                getPlayerTurn(out int rowChosen2, out int columnChosen2, m_MemoryGame.Board.NumOfRows, m_MemoryGame.Board.NumOfColumns);
-                m_MemoryGame.FlipUpCard(rowChosen2, columnChosen2);
-                Screen.Clear();
-                printPlayerTurn();
-                displayBoard(m_MemoryGame.Board);
-
-                tryMatchCards(rowChosen1, columnChosen1, rowChosen2, columnChosen2);
-                m_MemoryGame.CheckForWinner();
+                Turn();
             }
+        }
+
+        public void Turn()
+        {
+            Screen.Clear();
+            printPlayerTurn();
+            displayBoard(m_MemoryGame.Board);
+            getPlayerTurn(out int rowChosen1, out int columnChosen1, m_MemoryGame.Board.NumOfRows, m_MemoryGame.Board.NumOfColumns);
+            m_MemoryGame.FlipUpCard(rowChosen1, columnChosen1);
+
+            // Duplication of code !!!!
+            Screen.Clear(); // Maybe move onto displayBoard() ?
+            printPlayerTurn();
+            displayBoard(m_MemoryGame.Board);
+            getPlayerTurn(out int rowChosen2, out int columnChosen2, m_MemoryGame.Board.NumOfRows, m_MemoryGame.Board.NumOfColumns);
+            m_MemoryGame.FlipUpCard(rowChosen2, columnChosen2);
+            Screen.Clear();
+            printPlayerTurn();
+            displayBoard(m_MemoryGame.Board);
+
+            tryMatchCards(rowChosen1, columnChosen1, rowChosen2, columnChosen2);
+            m_MemoryGame.CheckForWinner();
+
         }
 
         private void printPlayerTurn()
