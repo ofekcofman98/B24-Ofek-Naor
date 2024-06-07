@@ -11,6 +11,7 @@ namespace GameInterface
         private const int k_NumOfPlayers = 2;
         private const int k_MaximumBoardSize = 6;
         private const int k_MinimumBoardSize = 4;
+        private const int k_AmountOfLetters = 26;
 
         private GameController m_MemoryGame;
 
@@ -41,7 +42,7 @@ namespace GameInterface
         {
             getNumberOfRows(out int numOfRows);
             getNumberOfColumns(numOfRows, out int numOfColumns);
-            m_MemoryGame.CreateNewRound(numOfRows, numOfColumns); 
+            m_MemoryGame.CreateNewRound(numOfRows, numOfColumns, k_AmountOfLetters); 
         }
 
         private void startNewRound() 
@@ -50,52 +51,138 @@ namespace GameInterface
             while(!m_MemoryGame.IsRoundOver)
             {
                 // code is duplicated
-                // one method of player1 turn
                 
                 Screen.Clear();
-                printPlayerTurn(); 
                 displayBoard(m_MemoryGame.Board);
-                getPlayerTurn(out int rowChosen1, out int columnChosen1, m_MemoryGame.Board.NumOfRows, m_MemoryGame.Board.NumOfColumns);
-                m_MemoryGame.FlipUpCard(rowChosen1, columnChosen1);
 
-                // Duplication of code !!!!
-                Screen.Clear(); // Maybe move onto displayBoard() ?
-                printPlayerTurn();
+                getPlayerTurn(out int rowChosen1, out int columnChosen1, m_MemoryGame.Board.NumOfRows, m_MemoryGame.Board.NumOfColumns, out bool isQuitGame);
+                if(isQuitGame)
+                {
+                    break;
+                }
+                m_MemoryGame.FlipUpCard(rowChosen1, columnChosen1);
+                Screen.Clear(); 
                 displayBoard(m_MemoryGame.Board);
-                getPlayerTurn(out int rowChosen2, out int columnChosen2, m_MemoryGame.Board.NumOfRows, m_MemoryGame.Board.NumOfColumns);
+
+                getPlayerTurn(out int rowChosen2, out int columnChosen2, m_MemoryGame.Board.NumOfRows, m_MemoryGame.Board.NumOfColumns, out isQuitGame);
+                if(isQuitGame)
+                {
+                    break;
+                }
                 m_MemoryGame.FlipUpCard(rowChosen2, columnChosen2);
                 Screen.Clear();
-                printPlayerTurn();
                 displayBoard(m_MemoryGame.Board);
 
                 tryMatchCards(rowChosen1, columnChosen1, rowChosen2, columnChosen2);
-                m_MemoryGame.CheckForWinner();
             }
         }
 
-        private void printPlayerTurn()
+        private void getPlayerTurn(out int o_RowChosen, out int o_ColumnChosen, int i_NumOfRows, int i_NumOfColumns, out bool o_QuitGame)
         {
-            // simplize player name
-            Console.WriteLine($"Now it is {m_MemoryGame.Players[m_MemoryGame.CurrentPlayerTurn].Name}'s turn: \n");
+            o_RowChosen = -1;
+            o_ColumnChosen = -1;
+            o_QuitGame = false;
+
+            Console.Write("Choose a card (e.g., A1 or C3) or press Q to quit: ");
+
+            while (true)
+            {
+                string playerInput = Console.ReadLine().ToUpper();
+
+                if (playerInput == "Q")
+                {
+                    o_QuitGame = true;
+                    m_MemoryGame.QuitRound();
+                    break;
+                }
+                // logic should already have board's dimensions!!! 
+                if (checkTurnInputValid(playerInput, i_NumOfRows, i_NumOfColumns, out o_RowChosen, out o_ColumnChosen))
+                {
+                    break;
+                }
+
+                Console.Write($"Choose a card (e.g., A1 or C3, within A-{(char)('A' + i_NumOfColumns - 1)} and 1-{i_NumOfRows}) or press Q to quit: ");
+            }
+        }
+
+        private bool checkTurnInputValid(string i_PlayerInput, int i_NumOfRows, int i_NumOfColumns, out int o_RowChosen, out int o_ColumnChosen)
+        {
+            o_RowChosen = -1;
+            o_ColumnChosen = -1;
+            bool isValid = true;
+
+            if (i_PlayerInput.Length != 2)
+            {
+                Console.WriteLine("Invalid input length. Please enter in the format ColRow (e.g., A1).");
+                isValid = false;
+            }
+            else
+            {
+                char columnChosen = i_PlayerInput[0];
+                char rowChar = i_PlayerInput[1];
+
+                if (!char.IsLetter(columnChosen))
+                {
+                    Console.WriteLine("Invalid column. The first character must be a letter.");
+                    isValid = false;
+                }
+
+                else if (!char.IsDigit(rowChar))
+                {
+                    Console.WriteLine("Invalid row. The second character must be a digit.");
+                    isValid = false;
+                }
+                else
+                { // Move to logics 
+                    if (!int.TryParse(rowChar.ToString(), out int rowChosen) || rowChosen < 1 || rowChosen > i_NumOfRows)
+                    {
+                        Console.WriteLine($"Invalid row. The row must be within 1-{i_NumOfRows}.");
+                        isValid = false;
+                    }
+                    else if (columnChosen < 'A' || columnChosen >= 'A' + i_NumOfColumns)
+                    {
+                        Console.WriteLine($"Invalid column. The column must be within A-{(char)('A' + i_NumOfColumns - 1)}.");
+                        isValid = false;
+                    }
+                    else if (m_MemoryGame.CheckIfCardRevealed(rowChosen - 1, columnChosen - 'A'))
+                    {
+                        Console.WriteLine("Card is already revealed, please choose a card that has yet to be revealed.");
+                        isValid = false;
+                    }
+                    else
+                    {
+                        o_RowChosen = rowChosen - 1;
+                        o_ColumnChosen = columnChosen - 'A';
+                    }
+                }
+            }
+
+            return isValid;
         }
 
         private void tryMatchCards(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
         {
-            if(m_MemoryGame.AreCardsMatched(i_RowChosen1, i_ColumnChosen1, i_RowChosen2, i_ColumnChosen2))
+            if (m_MemoryGame.AreCardsMatched(i_RowChosen1, i_ColumnChosen1, i_RowChosen2, i_ColumnChosen2))
             {
-                Console.WriteLine($"Cards are Matched! 1 Points added to {m_MemoryGame.Players[m_MemoryGame.CurrentPlayerTurn].Name}");
+                Console.WriteLine($"Cards are Matched! 1 Points added to {m_MemoryGame.GetCurrentPlayerName()}");
                 m_MemoryGame.ExecuteSuccessfullMatch(i_RowChosen1, i_ColumnChosen1, i_RowChosen2, i_ColumnChosen2);
             }
             else
             {
                 Console.WriteLine("Cards are not matched!");
                 m_MemoryGame.ExecuteFailedMatch(i_RowChosen1, i_ColumnChosen1, i_RowChosen2, i_ColumnChosen2);
-                Thread.Sleep(2000);
             }
+            Thread.Sleep(2000);
+        }
+
+        private void printPlayerTurn()
+        {
+            Console.WriteLine($"Now it is {m_MemoryGame.GetCurrentPlayerName()}'s turn: \n");
         }
 
         private bool checkIfPlayerWantsAnotherRound()
         {
+            Screen.Clear();
             Console.Write("Do you wish to play another round? click (y/n): ");
             string userChoice = Console.ReadLine().ToLower();
             while (userChoice != "y" && userChoice != "n")
@@ -180,86 +267,10 @@ namespace GameInterface
             return i_Dimension >= k_MinimumBoardSize && i_Dimension <= k_MaximumBoardSize;
         }
 
-        private void getPlayerTurn(out int o_RowChosen, out int o_ColumnChosen, int i_NumOfRows, int i_NumOfColumns)
-        {
-            Console.Write("Choose a card (e.g., A1 or C3) or press Q to quit: ");
-
-            //if (i_NumOfRows == 0)
-            while (true)
-            {
-                string playerInput = Console.ReadLine().ToUpper();
-
-                if (playerInput == "Q")
-                {
-                    Environment.Exit(0); // need to change!!! no exit
-                }
-                // logic should already have board's dimensions!!! 
-                if (checkTurnInputValid(playerInput, i_NumOfRows, i_NumOfColumns, out o_RowChosen, out o_ColumnChosen))
-                {
-                    break;
-                }
-
-                Console.Write($"Choose a card (e.g., A1 or C3, within A-{(char)('A' + i_NumOfColumns - 1)} and 1-{i_NumOfRows}) or press Q to quit: ");
-            }
-        }
-
-        private bool checkTurnInputValid(string i_PlayerInput, int i_NumOfRows, int i_NumOfColumns, out int o_RowChosen, out int o_ColumnChosen)
-        {
-            o_RowChosen = -1;
-            o_ColumnChosen = -1;
-            bool isValid = true;
-
-            if (i_PlayerInput.Length != 2)
-            {
-                Console.WriteLine("Invalid input length. Please enter in the format ColRow (e.g., A1).");
-                isValid = false;
-            }
-            else
-            {
-                char columnChosen = i_PlayerInput[0];
-                char rowChar = i_PlayerInput[1];
-
-                if (!char.IsLetter(columnChosen))
-                {
-                    Console.WriteLine("Invalid column. The first character must be a letter.");
-                    isValid = false;
-                }
-
-                else if (!char.IsDigit(rowChar))
-                {
-                    Console.WriteLine("Invalid row. The second character must be a digit.");
-                    isValid = false;
-                }
-                else
-                { // Move to logics 
-                    if (!int.TryParse(rowChar.ToString(), out int rowChosen) || rowChosen < 1 || rowChosen > i_NumOfRows)
-                    {
-                        Console.WriteLine($"Invalid row. The row must be within 1-{i_NumOfRows}.");
-                        isValid = false;
-                    }
-                    else if (columnChosen < 'A' || columnChosen >= 'A' + i_NumOfColumns)
-                    {
-                        Console.WriteLine($"Invalid column. The column must be within A-{(char)('A' + i_NumOfColumns - 1)}.");
-                        isValid = false;
-                    }
-                    else if(m_MemoryGame.CheckIfCardRevealed(rowChosen - 1, columnChosen - 'A'))
-                    {
-                        Console.WriteLine("Card is already revealed, please choose a card that has yet to be revealed.");
-                        isValid = false;
-                    }
-                    else
-                    {
-                        o_RowChosen = rowChosen - 1;
-                        o_ColumnChosen = columnChosen - 'A';
-                    }
-                }
-            }
-
-            return isValid;
-        }
-
+        // There can't be any use of GameLogic classes - we should reach them through m_MemoryGame
         private void displayBoard(Board i_Board)
         {
+            printPlayerTurn();
             // Display column headers
             Console.Write("   ");
             
@@ -284,6 +295,7 @@ namespace GameInterface
 
                 for (int col = 0; col < i_Board.NumOfColumns; col++)
                 {
+
                     Card cardToPrint = i_Board.Cards[row, col];
 
                     if (cardToPrint.CardStatus == eCardStatus.CurrentlyFacedUp || cardToPrint.CardStatus == eCardStatus.PermanentlyFacedUp)

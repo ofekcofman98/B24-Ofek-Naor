@@ -2,6 +2,7 @@
 using GameInterface;
 using System.Collections.Generic;
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace GameControl
@@ -16,19 +17,21 @@ namespace GameControl
         private int m_HeightOfBoard;
         List<int> m_FacedDownCardIndexList; // for the computer to choose wisely
         private bool m_IsRoundOver;
-        //private bool m_AI;
         private int m_CurrentPlayerTurn;
 
-        public void CreateNewRound(int i_NumOfRows, int i_NumOfColumns)
+        public void CreateNewRound(int i_NumOfRows, int i_NumOfColumns, int i_RangeOfIDs)
         {
-            m_Board = new Board(i_NumOfRows, i_NumOfColumns); // Need to change into a regular method (Board CreateBoard(), Board BoardInitialization())
+            m_Board = new Board(i_NumOfRows, i_NumOfColumns, i_RangeOfIDs);
             m_HeightOfBoard = i_NumOfRows;
             m_WidthOfBoard = i_NumOfColumns;
             m_FacedDownCardIndexList = new List<int>(m_WidthOfBoard * m_HeightOfBoard);
+
             for (int i = 0; i < i_NumOfRows * i_NumOfColumns; i++)
             {
                 m_FacedDownCardIndexList.Add(i);
             }
+
+            m_CurrentPlayerTurn = 0;
             m_IsRoundOver = false;
         }
 
@@ -48,16 +51,17 @@ namespace GameControl
                    == m_Board.Cards[i_RowChosen2, i_ColumnChosen2].ID;
         }
 
-        public void CheckForWinner()
+        private void checkForWinner()
         {
             int totalScoreOfAllPlayers = 0;
+            int numOfPairs = (m_Board.NumOfColumns * m_Board.NumOfRows) / 2;
 
-            foreach(Player player in Players)
+            foreach (Player player in Players)
             {
                 totalScoreOfAllPlayers += player.Score;
             }
 
-            m_IsRoundOver = totalScoreOfAllPlayers == (m_Board.NumOfColumns * m_Board.NumOfRows) / 2; // FIX TO "m_NumOfPairs"
+            m_IsRoundOver = totalScoreOfAllPlayers == numOfPairs; 
         }
 
         public void FlipUpCard(int i_RowChosen, int i_ColumnChosen)
@@ -70,33 +74,40 @@ namespace GameControl
             Board.Cards[i_RowChosen1, i_ColumnChosen1].RevealPermanently(); 
             Board.Cards[i_RowChosen2, i_ColumnChosen2].RevealPermanently();
             Players[m_CurrentPlayerTurn].Score += k_AddedPointsForMatchedCards;
-            int indexOfCard1 = FindIndexFromChoosing(i_RowChosen1, i_ColumnChosen1);
-            int indexOfCard2 = FindIndexFromChoosing(i_RowChosen2, i_ColumnChosen2);
-            m_FacedDownCardIndexList.Remove(indexOfCard1);
-            m_FacedDownCardIndexList.Remove(indexOfCard2);
+
+            updateFacedDownCardIndexList(i_RowChosen1, i_ColumnChosen1, i_RowChosen2, i_ColumnChosen2);
+
+            checkForWinner();
         }
         public void ExecuteFailedMatch(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
         {
             Board.Cards[i_RowChosen1, i_ColumnChosen1].FlipDown();  
             Board.Cards[i_RowChosen2, i_ColumnChosen2].FlipDown();
-            ChangePlayer();
+            changePlayer();
             if (Players[m_CurrentPlayerTurn].IsComputer)
             {
-                ComputerTurn();
+                computerTurn();
             }
-            // check if player[current] == computer:
-            //      remember those cards 
-            //      computer turn 
-            // perform computer move
         }
 
-        public int FindIndexFromChoosing(int i_Row, int i_Col)
+        private void computerTurn()
         {
-            return i_Row * m_WidthOfBoard + i_Col;
+            // FIX Add meanings to names
+            genrateComputerTurn(out int row1, out int col1, out int row2, out int col2);
+
+            while(AreCardsMatched(row1, col1, row2, col2))
+            {
+                ExecuteSuccessfullMatch(row1, col1, row2, col2);
+                if(!IsRoundOver)
+                {
+                    genrateComputerTurn(out row1, out col1, out row2, out col2);
+                }
+            }
+
+            ExecuteFailedMatch(row1, col1, row2, col2);   
         }
 
-
-        public void ComputerTurn()
+        private void genrateComputerTurn(out int o_RowChosen1, out int o_ColumnChosen1, out int o_RowChosen2, out int o_ColumnChosen2)
         {
             Random randomGenerator = new Random();
             int index1 = randomGenerator.Next(m_FacedDownCardIndexList.Count);
@@ -104,26 +115,50 @@ namespace GameControl
             do
             {
                 index2 = randomGenerator.Next(m_FacedDownCardIndexList.Count);
-            } while (index1 == index2); // is it legel? random inside a while loop?
-            // maybe remove index1 and then add back?
-            int row1 = FindRowFromIndex(index1);
-            int col1 = FindColFromIndex(index1);
-            int row2 = FindRowFromIndex(index2);
-            int col2 = FindColFromIndex(index2);
-            AreCardsMatched(row1, col1, row2, col2);
-            ExecuteSuccessfullMatch(row1, col1, row2, col2);
+            } while (index1 == index2); // Move to function 
+
+            o_RowChosen1 = findRowFromIndex(index1);
+            o_ColumnChosen1 = findColFromIndex(index1);
+            o_RowChosen2 = findRowFromIndex(index2);
+            o_ColumnChosen2 = findColFromIndex(index2);
         }
-        public int FindRowFromIndex(int index)
+
+        private void updateFacedDownCardIndexList(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
         {
-            return index / m_WidthOfBoard;
+            int indexOfCard1 = findIndexFromChoosing(i_RowChosen1, i_ColumnChosen1);
+            int indexOfCard2 = findIndexFromChoosing(i_RowChosen2, i_ColumnChosen2);
+            m_FacedDownCardIndexList.Remove(indexOfCard1);
+            m_FacedDownCardIndexList.Remove(indexOfCard2);
         }
-        public int FindColFromIndex(int index)
+
+        private int findIndexFromChoosing(int i_Row, int i_Column)
         {
-            return index % m_WidthOfBoard;
+            return i_Row * m_WidthOfBoard + i_Column;
         }
-        public void ChangePlayer()
+
+        private int findRowFromIndex(int i_BoardIndex)
+        {
+            return i_BoardIndex / m_WidthOfBoard;
+        }
+
+        private int findColFromIndex(int i_BoardIndex)
+        {
+            return i_BoardIndex % m_WidthOfBoard;
+        }
+
+        private void changePlayer()
         {
             m_CurrentPlayerTurn = (m_CurrentPlayerTurn + 1) % Players.Length;
+        }
+
+        public string GetCurrentPlayerName()
+        {
+            return m_Players[m_CurrentPlayerTurn].Name;
+        }
+
+        public void QuitRound()
+        {
+            m_IsRoundOver = true;
         }
         public Player[] Players
         {
@@ -142,10 +177,6 @@ namespace GameControl
             get
             {
                 return m_IsRoundOver;
-            }
-            set
-            {
-                m_IsRoundOver = value;
             }
         }
 

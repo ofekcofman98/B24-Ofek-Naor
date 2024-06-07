@@ -9,18 +9,18 @@ namespace GameLogics
 {
     public class Board
     {
-        private int m_NumOfRows;
+        private int m_NumOfRows; // GameController also has these members... why both classes have them? 
         private int m_NumOfColumns;
         private Card[,] m_CardsMatrix;
 
-        public Board(int i_NumOfRows, int i_NumOfColumns)
+        public Board(int i_NumOfRows, int i_NumOfColumns, int i_RangeOfIDs)
         {
             m_NumOfRows = i_NumOfRows;
             m_NumOfColumns = i_NumOfColumns;
             m_CardsMatrix = new Card[m_NumOfRows, m_NumOfColumns];
 
 
-            BoardInitialization(26); // Randomise letters (cards) 
+            BoardInitialization(i_RangeOfIDs); // Randomise letters (cards) 
         }
 
         public Card[,] Cards
@@ -47,9 +47,9 @@ namespace GameLogics
         {
             Random randomGenerator = new Random();
             int numOfCards = m_NumOfRows * m_NumOfColumns;
-            int numOfUniqueId = numOfCards / 2; // int for sure? even though we know numOfCards is even
+            int numOfUniqueId = numOfCards / 2; 
 
-            List<int> idDomainList = new List<int>(i_Range);        // define for 26
+            List<int> idDomainList = new List<int>(i_Range);        
             List<int> idInGameList = new List<int>(numOfCards);
 
             for (int i = 0; i < i_Range; i++)
@@ -79,7 +79,6 @@ namespace GameLogics
                 {
                     m_CardsMatrix[row, col] = new Card(idInGameList[cardId++]);
                 }
-
             }
         }
 
@@ -88,19 +87,15 @@ namespace GameLogics
         {
             Random randomGenerator = new Random();
             int listSize = i_List.Count;
-            while (listSize > 1) // 0?
+            while (listSize > 1) 
             {
                 listSize--;
                 int randomIndex = randomGenerator.Next(listSize + 1);
                 T tempVariable = i_List[listSize];
                 i_List[listSize] = i_List[randomIndex];
-                i_List[randomIndex] = tempVariable;
+                i_List[randomIndex] = tempVariable; // FIX into swap() function
 
             }
-        }
-        public static void PrintBoard(Card[,] i_CardsMatrix)
-        {
-
         }
     }
 }
