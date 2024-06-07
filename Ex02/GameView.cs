@@ -46,8 +46,12 @@ namespace GameInterface
 
         private void startNewRound() 
         {
+
             while(!m_MemoryGame.IsRoundOver)
             {
+                // code is duplicated
+                // one method of player1 turn
+                
                 Screen.Clear();
                 printPlayerTurn(); 
                 displayBoard(m_MemoryGame.Board);
@@ -180,6 +184,7 @@ namespace GameInterface
         {
             Console.Write("Choose a card (e.g., A1 or C3) or press Q to quit: ");
 
+            //if (i_NumOfRows == 0)
             while (true)
             {
                 string playerInput = Console.ReadLine().ToUpper();

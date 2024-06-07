@@ -6,7 +6,7 @@ namespace GameLogics
         private string m_PlayerName;
         private int m_Score;
         private bool m_IsComputer;
-
+        
         public string Name
         {
             get
