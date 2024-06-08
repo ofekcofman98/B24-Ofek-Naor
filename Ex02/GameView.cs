@@ -50,13 +50,11 @@ namespace GameInterface
 
             while(!m_MemoryGame.IsRoundOver)
             {
-                Screen.Clear();
                 displayBoard();
                 (int row1, int column1, int row2, int column2)? turnResult = m_MemoryGame.HandleTurn();
 
                 if(turnResult.HasValue)
                 {
-                    Screen.Clear();
                     displayBoard();
                     tryMatchCards(turnResult.Value.row1, turnResult.Value.column1, turnResult.Value.row2, turnResult.Value.column2);
                 }
@@ -75,7 +73,6 @@ namespace GameInterface
                 return;
             }
             m_MemoryGame.FlipUpCard(rowChosen1, columnChosen1);
-            Screen.Clear();
             displayBoard();
 
             getPlayerTurn(out int rowChosen2, out int columnChosen2, out isQuitGame);
@@ -84,7 +81,6 @@ namespace GameInterface
                 return;
             }
             m_MemoryGame.FlipUpCard(rowChosen2, columnChosen2);
-            Screen.Clear();
             displayBoard();
 
             tryMatchCards(rowChosen1, columnChosen1, rowChosen2, columnChosen2);
@@ -305,6 +301,7 @@ namespace GameInterface
 
         private void displayBoard()
         {
+            Screen.Clear();
             printPlayerTurn();
             
             Console.Write("   ");

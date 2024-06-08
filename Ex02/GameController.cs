@@ -45,7 +45,7 @@ namespace GameControl
             return (i_NumOfColumns * i_NumOfRows) % 2 == 0;
         }
 
-        public bool IsCardChosenInBounds(int i_RowChosen, int i_ColumnChosen) // CHECK IF WORKS!
+        public bool IsCardChosenInBounds(int i_RowChosen, int i_ColumnChosen) 
         {
             return (i_RowChosen >= 0 && i_RowChosen < m_HeightOfBoard) && 
                    (i_ColumnChosen >= 0 && i_ColumnChosen < m_WidthOfBoard);
@@ -58,18 +58,18 @@ namespace GameControl
 
         public (int row1, int column1, int row2, int column2)? HandleTurn()
         {
+            (int row1, int column1, int row2, int column2)? turnResult = null;
+
             if (Players[m_CurrentPlayerTurn].IsComputer)
             {
                 (int row1, int column1, int row2, int column2) = generateComputerTurn();
                 FlipUpCard(row1, column1);
                 FlipUpCard(row2, column2);
 
-                return (row1, column1, row2, column2);
+                turnResult = (row1, column1, row2, column2);
             }
-            else
-            {
-                return null; // Indicating it's a human player's turn
-            }
+
+            return turnResult;
         }
 
         public bool AreCardsMatched(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
