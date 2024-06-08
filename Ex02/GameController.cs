@@ -110,6 +110,20 @@ namespace GameControl
         {
             Board.Cards[i_RowChosen1, i_ColumnChosen1].FlipDown();  
             Board.Cards[i_RowChosen2, i_ColumnChosen2].FlipDown();
+
+            int card1Id = Board.Cards[i_RowChosen1, i_ColumnChosen1].ID; // saving card's id for the computer to remember
+            int card2Id = Board.Cards[i_RowChosen2, i_ColumnChosen2].ID; // saving card's id for the computer to remember
+            int indexOfCard1 = findIndexFromChoosing(i_RowChosen1, i_ColumnChosen1); // and the indexes
+            int indexOfCard2 = findIndexFromChoosing(i_RowChosen2, i_ColumnChosen2); // and the indexes
+            foreach(Player player in Players)
+            {
+                if(player.IsComputer)
+                {
+                    player.RememberTurn(card1Id, indexOfCard1); //changed
+                    player.RememberTurn(card2Id, indexOfCard2); //changed
+                }
+            }
+
             changePlayer();
         }
 
