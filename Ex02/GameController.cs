@@ -31,6 +31,11 @@ namespace GameControl
                 m_FacedDownCardIndexList.Add(i);
             }
 
+            foreach(Player player in Players)
+            {
+                player.Score = 0;
+            }
+
             m_CurrentPlayerTurn = 0;
             m_IsRoundOver = false;
         }
@@ -38,6 +43,12 @@ namespace GameControl
         public bool ValidateEvenAmountOfCards(int i_NumOfRows, int i_NumOfColumns)
         {
             return (i_NumOfColumns * i_NumOfRows) % 2 == 0;
+        }
+
+        public bool IsCardChosenInBounds(int i_RowChosen, int i_ColumnChosen) // CHECK IF WORKS!
+        {
+            return (i_RowChosen >= 0 && i_RowChosen < m_HeightOfBoard) && 
+                   (i_ColumnChosen >= 0 && i_ColumnChosen < m_WidthOfBoard);
         }
 
         public bool CheckIfCardRevealed(int i_RowChosen, int i_ColumnChosen)
@@ -156,6 +167,11 @@ namespace GameControl
             return m_Players[m_CurrentPlayerTurn].Name;
         }
 
+        public Card GetCard(int i_Row, int i_Column)
+        {
+            return m_Board.Cards[i_Row, i_Column];
+        }
+
         public void QuitRound()
         {
             m_IsRoundOver = true;
@@ -188,13 +204,28 @@ namespace GameControl
             }
         }
 
-        public int CurrentPlayerTurn
+        //public int CurrentPlayerTurn
+        //{
+        //    get
+        //    {
+        //        return m_CurrentPlayerTurn;
+        //    }
+        //}
+
+        public int WidthOfBoard
         {
             get
             {
-                return m_CurrentPlayerTurn;
+                return m_WidthOfBoard;
             }
         }
 
+        public int HeightOfBoard
+        {
+            get
+            {
+                return m_HeightOfBoard;
+            }
+        }
     }
 }
