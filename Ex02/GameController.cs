@@ -81,58 +81,29 @@ namespace GameControl
         public void ExecuteFailedMatch(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
         {
             Board.Cards[i_RowChosen1, i_ColumnChosen1].FlipDown();
-            Board.Cards[i_RowChosen2, i_ColumnChosen2].FlipDown();
+            Board.Cards[i_RowChosen2, i_ColumnChosen2].FlipDown(); // cars are not matchecd. flip them down 
+            int card1Id = Board.Cards[i_RowChosen1, i_ColumnChosen1].ID; // saving card's id for the computer to remember
+            int card2Id = Board.Cards[i_RowChosen2, i_ColumnChosen2].ID; // saving card's id for the computer to remember
+            int indexOfCard1 = FindIndexFromChoosing(i_RowChosen1, i_ColumnChosen1); // and the indexes
+            int indexOfCard2 = FindIndexFromChoosing(i_RowChosen2, i_ColumnChosen2); // and the indexes
+            if (Players[k_OpponentPlayerIndex].IsComputer)
+            {
+                Players[k_OpponentPlayerIndex].RememberTurn(card1Id, indexOfCard1); //changed
+                Players[k_OpponentPlayerIndex].RememberTurn(card2Id, indexOfCard2); //changed
+            }
+
             ChangePlayer();
             if (Players[m_CurrentPlayerTurn].IsComputer)
             {
                 ComputerTurn();
             }
-            int card1Id = Board.Cards[i_RowChosen1, i_ColumnChosen1].ID;
-            int card2Id = Board.Cards[i_RowChosen2, i_ColumnChosen2].ID;
-            int indexOfCard1 = FindIndexFromChoosing(i_RowChosen1, i_ColumnChosen1);
-            int indexOfCard2 = FindIndexFromChoosing(i_RowChosen2, i_ColumnChosen2);
 
-            if (Players[k_OpponentPlayerIndex].IsComputer)
-            {
-                ComputerRememberTurn(card1Id, indexOfCard1);
-                ComputerRememberTurn(card2Id, indexOfCard2);
-            }
             // check if player[current] == computer:
             //      remember those cards 
             //      computer turn 
             // perform computer move
         }
 
-        public void ComputerRememberTurn(int cardId, int i_IndexOfCard)
-        {
-            int n = Players[k_OpponentPlayerIndex].ComputerAiMemoryList[cardId].Index1 ?? i_IndexOfCard;
-
-            //if (IsCardIndexInAiMemory(cardId, out int o_CardIndex))
-            //{
-                ////Players[k_OpponentPlayerIndex].ComputerAiMemoryList[0]
-            //}
-            //else
-            //{
-                //CardsWithIndex = new CardsWithIndex(cardId,in)
-                //Players[k_OpponentPlayerIndex].ComputerAiMemoryList.Add()
-            //}
-        }
-
-        public bool IsCardIndexInAiMemory(int i_CardId, out int o_CardIndex)
-        {
-            //bool v_IsCardIndexInList = false;
-            //o_CardIndex = -1;
-            //for (int i = 0; i < Players[k_OpponentPlayerIndex].ComputerAiMemoryList.Count; i++)
-            //{
-            //    if (Players[k_OpponentPlayerIndex].ComputerAiMemoryList[i].ID == i_CardId)
-            //    {
-            //        v_IsCardIndexInList = true;
-            //        o_CardIndex = i;
-            //        break;
-            //    }
-            //}
-            //return v_IsCardIndexInList;
-        }
 
         public int FindIndexFromChoosing(int i_Row, int i_Col)
         {
@@ -140,8 +111,11 @@ namespace GameControl
         }
 
 
-        public void ComputerTurn()
+        public void ComputerTurn() // changed here 
         {
+
+            // first - need to check if there is id card that has two indexes not null in Player::m_FacedDownCardIndexList
+            // and make sure its flipped down!!! so the computer will not choose a id card that is already faced up
             Random randomGenerator = new Random();
             int index1 = randomGenerator.Next(m_FacedDownCardIndexList.Count);
             //if (IsCardIndexInAiMemory())

@@ -4,6 +4,7 @@ using Ex02.ConsoleUtils;
 using GameControl;
 using System.Threading;
 using System.Runtime.Remoting.Activation;
+using System.Management.Instrumentation;
 
 namespace GameInterface
 {
@@ -129,13 +130,14 @@ namespace GameInterface
         }
 
 
-        private Player[] getPlayersDetails()
+        private Player[] getPlayersDetails()  // naor i changed here 
         {
             Player[] playersArray = new Player[k_NumOfPlayers];
 
             Console.WriteLine("Please enter the player's name:");
-            playersArray[0] = new Player();
-            playersArray[0].Name = Console.ReadLine();
+            string i_PlayerName1 = Console.ReadLine();
+
+            playersArray[0] = new Player(i_PlayerName1, 0, false);
 
             Console.Write("Do you wish to play against the computer? click (y)/(n): ");
             string userChoice = Console.ReadLine().ToLower();
@@ -145,16 +147,15 @@ namespace GameInterface
                 userChoice = Console.ReadLine().ToLower();
             }
 
-            playersArray[1] = new Player();
             if (userChoice == "n")
             {
                 Console.WriteLine("Please enter 2nd player's name:");
-                playersArray[1].Name = Console.ReadLine();
+                string i_PlayerName2 = Console.ReadLine();
+                playersArray[1] = new Player(i_PlayerName2, 0, false);
             }
             else
             {
-                playersArray[1].Name = "Computer";
-                playersArray[1].IsComputer = true;
+                playersArray[1] = new Player("Computer", 0, true);
             }
 
             return playersArray;

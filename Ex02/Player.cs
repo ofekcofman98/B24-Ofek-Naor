@@ -10,14 +10,25 @@ namespace GameLogics
         private string m_PlayerName;
         private int m_Score;
         private bool m_IsComputer;
-        private List<CardsWithIndex> m_ComputerAiMemoryList; // delete "= null" ???? 
+        private List<CardsWithIndex> m_ComputerAiMemoryList;  // changed here 
 
-        public Player(string i_PlayerName, int i_Score, bool i_IsComputer) // ctor
+        public Player(string i_PlayerName, int i_Score, bool i_IsComputer) // changed here 
         {
             m_PlayerName = i_PlayerName;
             m_Score = i_Score;
             m_IsComputer = i_IsComputer;
-            m_ComputerAiMemoryList = i_IsComputer ? new List<CardsWithIndex>(26) : null;
+            if (i_IsComputer)
+            {
+                m_ComputerAiMemoryList = new List<CardsWithIndex>(26);
+                for (int i = 0; i < 26; i++)
+                {
+                    m_ComputerAiMemoryList.Add(new CardsWithIndex(i));
+                }
+            }
+            else
+            {
+                m_ComputerAiMemoryList = null; 
+            }
         }
 
         public string Name
@@ -56,7 +67,7 @@ namespace GameLogics
             }
         }
 
-        public List<CardsWithIndex> ComputerAiMemoryList
+        public List<CardsWithIndex> ComputerAiMemoryList // changed here
         {
             get 
             { 
@@ -65,6 +76,25 @@ namespace GameLogics
             set 
             { 
                 m_ComputerAiMemoryList = value; 
+            }
+        }
+
+        public void RememberTurn(int cardId, int cardIndex) // changed here 
+        {
+            if (m_IsComputer)
+            {
+                CardsWithIndex cardInMemory = m_ComputerAiMemoryList[cardId];
+
+                if (cardInMemory.ID == null)
+                {
+                    cardInMemory = new CardsWithIndex(cardId, cardIndex, null);
+                }
+                else
+                {
+                    cardInMemory.SetIndex(cardIndex);
+                }
+
+                m_ComputerAiMemoryList[cardId] = cardInMemory;
             }
         }
     }

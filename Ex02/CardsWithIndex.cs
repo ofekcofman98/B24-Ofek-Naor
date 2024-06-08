@@ -9,7 +9,7 @@ namespace GameLogics
         private int? m_Index2;
 
 
-        public CardsWithIndex(int i_CardId, int i_Index1, int i_Index2)
+        public CardsWithIndex(int i_CardId, int? i_Index1 = null, int? i_Index2 = null)
         {
             m_CardId = i_CardId;
             m_Index1 = i_Index1;
@@ -50,5 +50,18 @@ namespace GameLogics
                 m_Index2 = value; 
             }
         }
+
+        public void SetIndex(int index)
+        {
+            if (!m_Index1.HasValue)
+            {
+                m_Index1 = index;
+            }
+            else if (m_Index1 != index && !m_Index2.HasValue)
+            {
+                m_Index2 = index;
+            }
+        }
+
     }
 }
