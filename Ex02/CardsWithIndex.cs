@@ -4,20 +4,20 @@ namespace GameLogics
 {
     public struct CardsWithIndex
     {
-        private int? m_CardId;
-        private int? m_Index1;
-        private int? m_Index2;
+        private int m_CardId;
+        private int m_Row;
+        private int m_Column;
 
 
-        public CardsWithIndex(int i_CardId, int? i_Index1 = null, int? i_Index2 = null)
+        public CardsWithIndex(int i_CardId, int i_Row, int i_Column)
         {
             m_CardId = i_CardId;
-            m_Index1 = i_Index1;
-            m_Index2 = i_Index2;
+            m_Row = i_Row;
+            m_Column = i_Column;
         }
 
 
-        public int? ID
+        public int ID
         {
             get
             {
@@ -28,38 +28,26 @@ namespace GameLogics
                 m_CardId = value; 
             }
         }
-        public int? Index1
+        public int Row
         {
             get
             {
-                return m_Index1;
+                return m_Row;
             }
             set
             {
-                m_Index1 = value;
+                m_Row = value;
             }
         }
-        public int? Index2
+        public int Column
         {
             get
             {
-                return m_Index2;
+                return m_Column;
             }
             set
-            { 
-                m_Index2 = value; 
-            }
-        }
-
-        public void SetIndex(int index)
-        {
-            if (!m_Index1.HasValue)
             {
-                m_Index1 = index;
-            }
-            else if (m_Index1 != index && !m_Index2.HasValue)
-            {
-                m_Index2 = index;
+                m_Column = value; 
             }
         }
 

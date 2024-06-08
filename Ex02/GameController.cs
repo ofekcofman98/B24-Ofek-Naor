@@ -113,14 +113,13 @@ namespace GameControl
 
             int card1Id = Board.Cards[i_RowChosen1, i_ColumnChosen1].ID; // saving card's id for the computer to remember
             int card2Id = Board.Cards[i_RowChosen2, i_ColumnChosen2].ID; // saving card's id for the computer to remember
-            int indexOfCard1 = findIndexFromChoosing(i_RowChosen1, i_ColumnChosen1); // and the indexes
-            int indexOfCard2 = findIndexFromChoosing(i_RowChosen2, i_ColumnChosen2); // and the indexes
+
             foreach(Player player in Players)
             {
                 if(player.IsComputer)
                 {
-                    player.RememberTurn(card1Id, indexOfCard1); //changed
-                    player.RememberTurn(card2Id, indexOfCard2); //changed
+                    player.RememberTurn(card1Id, i_RowChosen1, i_ColumnChosen1); 
+                    player.RememberTurn(card2Id, i_RowChosen2, i_ColumnChosen2); 
                 }
             }
 
@@ -131,19 +130,28 @@ namespace GameControl
         {
             Random randomGenerator = new Random();
             int indexGenerated1 = randomGenerator.Next(m_FacedDownCardIndexList.Count);
-            int indexGenerated2;
-            do
-            {
-                indexGenerated2 = randomGenerator.Next(m_FacedDownCardIndexList.Count);
-            } while (indexGenerated1 == indexGenerated2);
-
             int cardIndex1 = m_FacedDownCardIndexList[indexGenerated1];
-            int cardIndex2 = m_FacedDownCardIndexList[indexGenerated2];
+            int indexGenerated2;
 
             int rowChosen1 = findRowFromIndex(cardIndex1);
             int columnChosen1 = findColFromIndex(cardIndex1);
-            int rowChosen2 = findRowFromIndex(cardIndex2);
-            int columnChosen2 = findColFromIndex(cardIndex2);
+            CardsWithIndex cardToFind = new CardsWithIndex(m_Board.Cards[rowChosen1, columnChosen1].ID, rowChosen1, columnChosen1);
+            
+            if(Players[m_CurrentPlayerTurn].FindCardInMemory(cardToFind, out int rowChosen2, out int columnChosen2))
+            {
+                indexGenerated2 = findIndexFromChoosing(rowChosen2, columnChosen2);
+            }
+            else
+            {
+                do
+                {
+                    indexGenerated2 = randomGenerator.Next(m_FacedDownCardIndexList.Count);
+                } while (indexGenerated1 == indexGenerated2);
+
+                int cardIndex2 = m_FacedDownCardIndexList[indexGenerated2];
+                rowChosen2 = findRowFromIndex(cardIndex2);
+                columnChosen2 = findColFromIndex(cardIndex2);
+            }
 
             return (rowChosen1, columnChosen1, rowChosen2, columnChosen2);
         }

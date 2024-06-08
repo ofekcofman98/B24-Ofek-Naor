@@ -247,13 +247,13 @@ namespace GameInterface
             Player[] playersArray = new Player[k_NumOfPlayers];
 
             Console.WriteLine("Please enter the player's name:");
-            Console.WriteLine("Please enter the player's name:");
             string i_PlayerName1 = Console.ReadLine();
 
-            playersArray[0] = new Player(i_PlayerName1, 0, false, k_AmountOfLetters);
+            playersArray[0] = new Player(i_PlayerName1, 0, false);
 
             Console.Write("Do you wish to play against the computer? click (y)/(n): ");
             string userChoice = Console.ReadLine().ToLower();
+
             while (userChoice != "y" && userChoice != "n")
             {
                 Console.WriteLine("Invalid input. Please enter 'y' or 'n'.");
@@ -264,11 +264,11 @@ namespace GameInterface
             {
                 Console.WriteLine("Please enter 2nd player's name:");
                 string i_PlayerName2 = Console.ReadLine();
-                playersArray[1] = new Player(i_PlayerName2, 0, false, k_AmountOfLetters);
+                playersArray[1] = new Player(i_PlayerName2, 0, false);
             }
             else
             {
-                playersArray[1] = new Player("Computer", 0, true, k_AmountOfLetters);
+                playersArray[1] = new Player("Computer", 0, true);
             }
 
             return playersArray;
