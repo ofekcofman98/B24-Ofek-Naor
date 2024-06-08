@@ -56,6 +56,22 @@ namespace GameControl
             return m_Board.Cards[i_RowChosen, i_ColumnChosen].IsFacedUp();
         }
 
+        public (int row1, int column1, int row2, int column2)? HandleTurn()
+        {
+            if (Players[m_CurrentPlayerTurn].IsComputer)
+            {
+                (int row1, int column1, int row2, int column2) = generateComputerTurn();
+                FlipUpCard(row1, column1);
+                FlipUpCard(row2, column2);
+
+                return (row1, column1, row2, column2);
+            }
+            else
+            {
+                return null; // Indicating it's a human player's turn
+            }
+        }
+
         public bool AreCardsMatched(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
         {
             return m_Board.Cards[i_RowChosen1, i_ColumnChosen1].ID
@@ -95,43 +111,27 @@ namespace GameControl
             Board.Cards[i_RowChosen1, i_ColumnChosen1].FlipDown();  
             Board.Cards[i_RowChosen2, i_ColumnChosen2].FlipDown();
             changePlayer();
-            if (Players[m_CurrentPlayerTurn].IsComputer)
-            {
-                computerTurn();
-            }
         }
 
-        private void computerTurn()
-        {
-            // FIX Add meanings to names
-            genrateComputerTurn(out int row1, out int col1, out int row2, out int col2);
-
-            while(AreCardsMatched(row1, col1, row2, col2))
-            {
-                ExecuteSuccessfullMatch(row1, col1, row2, col2);
-                if(!IsRoundOver)
-                {
-                    genrateComputerTurn(out row1, out col1, out row2, out col2);
-                }
-            }
-
-            ExecuteFailedMatch(row1, col1, row2, col2);   
-        }
-
-        private void genrateComputerTurn(out int o_RowChosen1, out int o_ColumnChosen1, out int o_RowChosen2, out int o_ColumnChosen2)
+        private (int rorowChosen1w1, int columnChosen1, int rowChosen2, int columnChosen2) generateComputerTurn()
         {
             Random randomGenerator = new Random();
-            int index1 = randomGenerator.Next(m_FacedDownCardIndexList.Count);
-            int index2;
+            int indexGenerated1 = randomGenerator.Next(m_FacedDownCardIndexList.Count);
+            int indexGenerated2;
             do
             {
-                index2 = randomGenerator.Next(m_FacedDownCardIndexList.Count);
-            } while (index1 == index2); // Move to function 
+                indexGenerated2 = randomGenerator.Next(m_FacedDownCardIndexList.Count);
+            } while (indexGenerated1 == indexGenerated2);
 
-            o_RowChosen1 = findRowFromIndex(index1);
-            o_ColumnChosen1 = findColFromIndex(index1);
-            o_RowChosen2 = findRowFromIndex(index2);
-            o_ColumnChosen2 = findColFromIndex(index2);
+            int cardIndex1 = m_FacedDownCardIndexList[indexGenerated1];
+            int cardIndex2 = m_FacedDownCardIndexList[indexGenerated2];
+
+            int rowChosen1 = findRowFromIndex(cardIndex1);
+            int columnChosen1 = findColFromIndex(cardIndex1);
+            int rowChosen2 = findRowFromIndex(cardIndex2);
+            int columnChosen2 = findColFromIndex(cardIndex2);
+
+            return (rowChosen1, columnChosen1, rowChosen2, columnChosen2);
         }
 
         private void updateFacedDownCardIndexList(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)

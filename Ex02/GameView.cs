@@ -50,33 +50,44 @@ namespace GameInterface
 
             while(!m_MemoryGame.IsRoundOver)
             {
-                // code is duplicated
-                
                 Screen.Clear();
                 displayBoard();
+                (int row1, int column1, int row2, int column2)? turnResult = m_MemoryGame.HandleTurn();
 
-                getPlayerTurn(out int rowChosen1, out int columnChosen1, out bool isQuitGame);
-                if(isQuitGame)
+                if(turnResult.HasValue)
                 {
-                    break;
+                    Screen.Clear();
+                    displayBoard();
+                    tryMatchCards(turnResult.Value.row1, turnResult.Value.column1, turnResult.Value.row2, turnResult.Value.column2);
                 }
-
-                m_MemoryGame.FlipUpCard(rowChosen1, columnChosen1);
-                Screen.Clear(); 
-                displayBoard();
-
-                getPlayerTurn(out int rowChosen2, out int columnChosen2, out isQuitGame);
-                if(isQuitGame)
+                else
                 {
-                    break;
+                    handleHumanTurn();
                 }
-
-                m_MemoryGame.FlipUpCard(rowChosen2, columnChosen2);
-                Screen.Clear();
-                displayBoard();
-
-                tryMatchCards(rowChosen1, columnChosen1, rowChosen2, columnChosen2);
             }
+        }
+
+        private void handleHumanTurn()
+        {
+            getPlayerTurn(out int rowChosen1, out int columnChosen1, out bool isQuitGame);
+            if (isQuitGame)
+            {
+                return;
+            }
+            m_MemoryGame.FlipUpCard(rowChosen1, columnChosen1);
+            Screen.Clear();
+            displayBoard();
+
+            getPlayerTurn(out int rowChosen2, out int columnChosen2, out isQuitGame);
+            if (isQuitGame)
+            {
+                return;
+            }
+            m_MemoryGame.FlipUpCard(rowChosen2, columnChosen2);
+            Screen.Clear();
+            displayBoard();
+
+            tryMatchCards(rowChosen1, columnChosen1, rowChosen2, columnChosen2);
         }
 
         private void getPlayerTurn(out int o_RowChosen, out int o_ColumnChosen, out bool o_QuitGame)
