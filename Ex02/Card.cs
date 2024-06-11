@@ -1,13 +1,10 @@
 ﻿
-using Ex02;
-
 namespace GameLogics
 {
-    public struct Card  // Class?
+    public struct Card
     {
         private int m_CardId;
         private eCardStatus m_CardStatus;
-        // private Card m_pair;
 
         public Card(int i_CardId)
         {
@@ -15,7 +12,7 @@ namespace GameLogics
             m_CardStatus = eCardStatus.FacedDown;
         }
 
-        public int ID
+        public int Id
         {
             get
             {

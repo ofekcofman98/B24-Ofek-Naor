@@ -3,7 +3,6 @@ using GameLogics;
 using Ex02.ConsoleUtils;
 using GameControl;
 using System.Threading;
-using System.Collections.Generic;
 
 namespace GameInterface
 {
@@ -333,7 +332,7 @@ namespace GameInterface
 
                     if (cardToPrint.IsFacedUp())
                     {
-                        char displayChar = (char)('A' + cardToPrint.ID);
+                        char displayChar = (char)('A' + cardToPrint.Id);
                         Console.Write($" {displayChar} |");
                     }
                     else

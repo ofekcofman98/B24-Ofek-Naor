@@ -1,7 +1,4 @@
-﻿
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
+﻿using System.Collections.Generic;
 
 namespace GameLogics
 {
@@ -28,7 +25,6 @@ namespace GameLogics
                 m_ComputerAiMemoryList = null;
             }
         }
-
 
         public List<CardsWithIndex> ComputerAiMemoryList 
         {
@@ -59,7 +55,7 @@ namespace GameLogics
 
             foreach(CardsWithIndex cardWithIndex in m_ComputerAiMemoryList)
             {
-                if(cardWithIndex.ID == i_CardToFind.ID && (cardWithIndex.Row != i_CardToFind.Row || cardWithIndex.Column != i_CardToFind.Column))
+                if(cardWithIndex.Id == i_CardToFind.Id && (cardWithIndex.Row != i_CardToFind.Row || cardWithIndex.Column != i_CardToFind.Column))
                 {
                     o_RowChosen = cardWithIndex.Row;
                     o_ColumnChosen = cardWithIndex.Column;

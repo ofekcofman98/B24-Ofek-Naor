@@ -1,6 +1,4 @@
-﻿using Ex02;
-
-namespace GameLogics
+﻿namespace GameLogics
 {
     public struct CardsWithIndex
     {
@@ -17,7 +15,7 @@ namespace GameLogics
         }
 
 
-        public int ID
+        public int Id
         {
             get
             {

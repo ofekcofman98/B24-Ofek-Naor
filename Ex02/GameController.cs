@@ -1,9 +1,6 @@
 ﻿using GameLogics;
-using GameInterface;
 using System.Collections.Generic;
 using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace GameControl
 {
@@ -74,8 +71,8 @@ namespace GameControl
 
         public bool AreCardsMatched(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
         {
-            return m_Board.Cards[i_RowChosen1, i_ColumnChosen1].ID
-                   == m_Board.Cards[i_RowChosen2, i_ColumnChosen2].ID;
+            return m_Board.Cards[i_RowChosen1, i_ColumnChosen1].Id
+                   == m_Board.Cards[i_RowChosen2, i_ColumnChosen2].Id;
         }
 
         private void checkForWinner()
@@ -111,8 +108,8 @@ namespace GameControl
             Board.Cards[i_RowChosen1, i_ColumnChosen1].FlipDown();  
             Board.Cards[i_RowChosen2, i_ColumnChosen2].FlipDown();
 
-            int card1Id = Board.Cards[i_RowChosen1, i_ColumnChosen1].ID; // saving card's id for the computer to remember
-            int card2Id = Board.Cards[i_RowChosen2, i_ColumnChosen2].ID; // saving card's id for the computer to remember
+            int card1Id = Board.Cards[i_RowChosen1, i_ColumnChosen1].Id; // saving card's id for the computer to remember
+            int card2Id = Board.Cards[i_RowChosen2, i_ColumnChosen2].Id; // saving card's id for the computer to remember
 
             foreach(Player player in Players)
             {
@@ -135,7 +132,7 @@ namespace GameControl
 
             int rowChosen1 = findRowFromIndex(cardIndex1);
             int columnChosen1 = findColFromIndex(cardIndex1);
-            CardsWithIndex cardToFind = new CardsWithIndex(m_Board.Cards[rowChosen1, columnChosen1].ID, rowChosen1, columnChosen1);
+            CardsWithIndex cardToFind = new CardsWithIndex(m_Board.Cards[rowChosen1, columnChosen1].Id, rowChosen1, columnChosen1);
             
             if(Players[m_CurrentPlayerTurn].FindCardInMemory(cardToFind, out int rowChosen2, out int columnChosen2))
             {
