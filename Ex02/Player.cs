@@ -29,6 +29,7 @@ namespace GameLogics
             }
         }
 
+
         public List<CardsWithIndex> ComputerAiMemoryList 
         {
             get
