@@ -1,20 +1,18 @@
 ﻿using GameLogics;
-using GameInterface;
 using System.Collections.Generic;
 using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace GameControl
 {
     public class GameController
     {
         private const int k_AddedPointsForMatchedCards = 1;
+        private const int k_FirstPlayer = 0;
+        private const int k_NextTurn = 1;
+        public const int k_InitialScoreForPlayers = 0;
 
         private Player[] m_Players;
         private Board m_Board;
-        private int m_WidthOfBoard;
-        private int m_HeightOfBoard;
         List<int> m_FacedDownCardIndexList; // for the computer to choose wisely
         private bool m_IsRoundOver;
         private int m_CurrentPlayerTurn;
@@ -22,9 +20,7 @@ namespace GameControl
         public void CreateNewRound(int i_NumOfRows, int i_NumOfColumns, int i_RangeOfIDs)
         {
             m_Board = new Board(i_NumOfRows, i_NumOfColumns, i_RangeOfIDs);
-            m_HeightOfBoard = i_NumOfRows;
-            m_WidthOfBoard = i_NumOfColumns;
-            m_FacedDownCardIndexList = new List<int>(m_WidthOfBoard * m_HeightOfBoard);
+            m_FacedDownCardIndexList = new List<int>(m_Board.NumOfColumns * m_Board.NumOfRows);
 
             for (int i = 0; i < i_NumOfRows * i_NumOfColumns; i++)
             {
@@ -33,10 +29,10 @@ namespace GameControl
 
             foreach(Player player in Players)
             {
-                player.Score = 0;
+                player.Score = k_InitialScoreForPlayers;
             }
 
-            m_CurrentPlayerTurn = 0;
+            m_CurrentPlayerTurn = k_FirstPlayer;
             m_IsRoundOver = false;
         }
 
@@ -47,8 +43,8 @@ namespace GameControl
 
         public bool IsCardChosenInBounds(int i_RowChosen, int i_ColumnChosen) 
         {
-            return (i_RowChosen >= 0 && i_RowChosen < m_HeightOfBoard) && 
-                   (i_ColumnChosen >= 0 && i_ColumnChosen < m_WidthOfBoard);
+            return (i_RowChosen >= 0 && i_RowChosen < m_Board.NumOfRows) && 
+                   (i_ColumnChosen >= 0 && i_ColumnChosen < m_Board.NumOfColumns);
         }
 
         public bool CheckIfCardRevealed(int i_RowChosen, int i_ColumnChosen)
@@ -56,17 +52,17 @@ namespace GameControl
             return m_Board.Cards[i_RowChosen, i_ColumnChosen].IsFacedUp();
         }
 
-        public (int row1, int column1, int row2, int column2)? HandleTurn()
+        public (int rowChosen1, int columnChosen1, int rowChosen2, int columnChosen2)? HandleTurn()
         {
-            (int row1, int column1, int row2, int column2)? turnResult = null;
+            (int rowChosen1, int columnChosen1, int rowChosen2, int columnChosen2)? turnResult = null;
 
             if (Players[m_CurrentPlayerTurn].IsComputer)
             {
-                (int row1, int column1, int row2, int column2) = generateComputerTurn();
-                FlipUpCard(row1, column1);
-                FlipUpCard(row2, column2);
+                (int rowChosen1, int columnChosen1, int rowChosen2, int columnChosen2) = generateComputerTurn();
+                FlipUpCard(rowChosen1, columnChosen1);
+                FlipUpCard(rowChosen2, columnChosen2);
 
-                turnResult = (row1, column1, row2, column2);
+                turnResult = (rowChosen1, columnChosen1, rowChosen2, columnChosen2);
             }
 
             return turnResult;
@@ -98,21 +94,22 @@ namespace GameControl
 
         public void ExecuteSuccessfullMatch(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
         {
-            Board.Cards[i_RowChosen1, i_ColumnChosen1].RevealPermanently(); 
-            Board.Cards[i_RowChosen2, i_ColumnChosen2].RevealPermanently();
+            m_Board.Cards[i_RowChosen1, i_ColumnChosen1].RevealPermanently();
+            m_Board.Cards[i_RowChosen2, i_ColumnChosen2].RevealPermanently();
             Players[m_CurrentPlayerTurn].Score += k_AddedPointsForMatchedCards;
 
             updateFacedDownCardIndexList(i_RowChosen1, i_ColumnChosen1, i_RowChosen2, i_ColumnChosen2);
 
             checkForWinner();
         }
+
         public void ExecuteFailedMatch(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
         {
-            Board.Cards[i_RowChosen1, i_ColumnChosen1].FlipDown();  
-            Board.Cards[i_RowChosen2, i_ColumnChosen2].FlipDown();
+            m_Board.Cards[i_RowChosen1, i_ColumnChosen1].FlipDown();
+            m_Board.Cards[i_RowChosen2, i_ColumnChosen2].FlipDown();
 
-            int card1Id = Board.Cards[i_RowChosen1, i_ColumnChosen1].ID; // saving card's id for the computer to remember
-            int card2Id = Board.Cards[i_RowChosen2, i_ColumnChosen2].ID; // saving card's id for the computer to remember
+            int card1Id = m_Board.Cards[i_RowChosen1, i_ColumnChosen1].ID; 
+            int card2Id = m_Board.Cards[i_RowChosen2, i_ColumnChosen2].ID; 
 
             foreach(Player player in Players)
             {
@@ -123,7 +120,7 @@ namespace GameControl
                 }
             }
 
-            changePlayer();
+            changePlayerTurn();
         }
 
         private (int rorowChosen1w1, int columnChosen1, int rowChosen2, int columnChosen2) generateComputerTurn()
@@ -166,22 +163,22 @@ namespace GameControl
 
         private int findIndexFromChoosing(int i_Row, int i_Column)
         {
-            return i_Row * m_WidthOfBoard + i_Column;
+            return i_Row * m_Board.NumOfColumns + i_Column;
         }
 
         private int findRowFromIndex(int i_BoardIndex)
         {
-            return i_BoardIndex / m_WidthOfBoard;
+            return i_BoardIndex / m_Board.NumOfColumns;
         }
 
         private int findColFromIndex(int i_BoardIndex)
         {
-            return i_BoardIndex % m_WidthOfBoard;
+            return i_BoardIndex % m_Board.NumOfColumns;
         }
 
-        private void changePlayer()
+        private void changePlayerTurn()
         {
-            m_CurrentPlayerTurn = (m_CurrentPlayerTurn + 1) % Players.Length;
+            m_CurrentPlayerTurn = (m_CurrentPlayerTurn + k_NextTurn) % Players.Length;
         }
 
         public string GetCurrentPlayerName()
@@ -194,10 +191,21 @@ namespace GameControl
             return m_Board.Cards[i_Row, i_Column];
         }
 
+        public int GetWidthOfBoard()
+        {
+            return m_Board.NumOfColumns;
+        }
+
+        public int GetHeightOfBoard()
+        {
+            return m_Board.NumOfRows;
+        }
+
         public void QuitRound()
         {
             m_IsRoundOver = true;
         }
+
         public Player[] Players
         {
             get
@@ -215,38 +223,6 @@ namespace GameControl
             get
             {
                 return m_IsRoundOver;
-            }
-        }
-
-        public Board Board
-        {
-            get
-            {
-                return m_Board;
-            }
-        }
-
-        //public int CurrentPlayerTurn
-        //{
-        //    get
-        //    {
-        //        return m_CurrentPlayerTurn;
-        //    }
-        //}
-
-        public int WidthOfBoard
-        {
-            get
-            {
-                return m_WidthOfBoard;
-            }
-        }
-
-        public int HeightOfBoard
-        {
-            get
-            {
-                return m_HeightOfBoard;
             }
         }
     }
