@@ -70,8 +70,8 @@ namespace GameControl
 
         public bool AreCardsMatched(int i_RowChosen1, int i_ColumnChosen1, int i_RowChosen2, int i_ColumnChosen2)
         {
-            return m_Board.Cards[i_RowChosen1, i_ColumnChosen1].ID
-                   == m_Board.Cards[i_RowChosen2, i_ColumnChosen2].ID;
+            return m_Board.Cards[i_RowChosen1, i_ColumnChosen1].Id
+                   == m_Board.Cards[i_RowChosen2, i_ColumnChosen2].Id;
         }
 
         private void checkForWinner()
@@ -108,8 +108,8 @@ namespace GameControl
             m_Board.Cards[i_RowChosen1, i_ColumnChosen1].FlipDown();
             m_Board.Cards[i_RowChosen2, i_ColumnChosen2].FlipDown();
 
-            int card1Id = m_Board.Cards[i_RowChosen1, i_ColumnChosen1].ID; 
-            int card2Id = m_Board.Cards[i_RowChosen2, i_ColumnChosen2].ID; 
+            int card1Id = m_Board.Cards[i_RowChosen1, i_ColumnChosen1].Id; 
+            int card2Id = m_Board.Cards[i_RowChosen2, i_ColumnChosen2].Id; 
 
             foreach(Player player in Players)
             {
@@ -132,7 +132,7 @@ namespace GameControl
 
             int rowChosen1 = findRowFromIndex(cardIndex1);
             int columnChosen1 = findColFromIndex(cardIndex1);
-            CardsWithIndex cardToFind = new CardsWithIndex(m_Board.Cards[rowChosen1, columnChosen1].ID, rowChosen1, columnChosen1);
+            CardsWithIndex cardToFind = new CardsWithIndex(m_Board.Cards[rowChosen1, columnChosen1].Id, rowChosen1, columnChosen1);
             
             if(Players[m_CurrentPlayerTurn].FindCardInMemory(cardToFind, out int rowChosen2, out int columnChosen2))
             {

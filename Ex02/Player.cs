@@ -1,13 +1,11 @@
-﻿
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
+﻿using System.Collections.Generic;
 
 namespace GameLogics
 {
     public class Player
     {
         private const int k_AmountOfLastTurnsRemembered = 4;
+        private const int k_OldestItemIndexInList = 0;
 
         private string m_PlayerName;
         private int m_Score;
@@ -44,7 +42,7 @@ namespace GameLogics
         {
             if (m_ComputerAiMemoryList.Count == k_AmountOfLastTurnsRemembered)
             {
-                m_ComputerAiMemoryList.RemoveAt(0); // Remove the oldest item
+                m_ComputerAiMemoryList.RemoveAt(k_OldestItemIndexInList); // Remove the oldest item
             }
             m_ComputerAiMemoryList.Add(new CardsWithIndex(i_CardId, i_Row, i_Column));
         }
@@ -57,7 +55,7 @@ namespace GameLogics
 
             foreach(CardsWithIndex cardWithIndex in m_ComputerAiMemoryList)
             {
-                if(cardWithIndex.ID == i_CardToFind.ID && (cardWithIndex.Row != i_CardToFind.Row || cardWithIndex.Column != i_CardToFind.Column))
+                if(cardWithIndex.Id == i_CardToFind.Id && (cardWithIndex.Row != i_CardToFind.Row || cardWithIndex.Column != i_CardToFind.Column))
                 {
                     o_RowChosen = cardWithIndex.Row;
                     o_ColumnChosen = cardWithIndex.Column;

@@ -340,7 +340,7 @@ namespace GameInterface
 
                     if (cardToPrint.IsFacedUp())
                     {
-                        char displayChar = (char)('A' + cardToPrint.ID);
+                        char displayChar = (char)('A' + cardToPrint.Id);
                         Console.Write($" {displayChar} |");
                     }
                     else
