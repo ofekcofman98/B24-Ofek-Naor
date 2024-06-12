@@ -10,7 +10,7 @@ namespace GameLogics
         private string m_PlayerName;
         private int m_Score;
         private bool m_IsComputer;
-        private List<CardsLocationOnBoard> m_ComputerAiMemoryList;
+        private readonly List<CardsLocationOnBoard> r_ComputerAiMemoryList;
 
         public Player(string i_PlayerName, int i_Score, bool i_IsComputer) 
         {
@@ -20,21 +20,22 @@ namespace GameLogics
 
             if (i_IsComputer)
             {
-                m_ComputerAiMemoryList = new List<CardsLocationOnBoard>();
+                r_ComputerAiMemoryList = new List<CardsLocationOnBoard>();
             }
             else
             {
-                m_ComputerAiMemoryList = null;
+                r_ComputerAiMemoryList = null;
             }
         }
 
         public void RememberTurn(int i_CardId, int i_Row, int i_Column)
         {
-            if (m_ComputerAiMemoryList.Count == k_AmountOfLastTurnsRemembered)
+            if (r_ComputerAiMemoryList.Count == k_AmountOfLastTurnsRemembered)
             {
-                m_ComputerAiMemoryList.RemoveAt(k_OldestItemIndexInMemoryList); // Remove the oldest item in memory
+                r_ComputerAiMemoryList.RemoveAt(k_OldestItemIndexInMemoryList); // Remove the oldest item in memory
             }
-            m_ComputerAiMemoryList.Add(new CardsLocationOnBoard(i_CardId, i_Row, i_Column));
+
+            r_ComputerAiMemoryList.Add(new CardsLocationOnBoard(i_CardId, i_Row, i_Column));
         }
 
         public bool FindCardInMemory(CardsLocationOnBoard i_CardToFind, out int o_RowChosen, out int o_ColumnChosen)
@@ -43,7 +44,7 @@ namespace GameLogics
             o_ColumnChosen = -1;
             bool isInList = false;
 
-            foreach(CardsLocationOnBoard cardWithLocation in m_ComputerAiMemoryList)
+            foreach(CardsLocationOnBoard cardWithLocation in r_ComputerAiMemoryList)
             {
                 if(cardWithLocation.Id == i_CardToFind.Id && (cardWithLocation.Row != i_CardToFind.Row || cardWithLocation.Column != i_CardToFind.Column))
                 {
