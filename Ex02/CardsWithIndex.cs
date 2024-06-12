@@ -1,19 +1,17 @@
 ﻿namespace GameLogics
 {
-    public struct CardsWithIndex
+    public struct CardsLocationOnBoard
     {
         private int m_CardId;
         private int m_Row;
         private int m_Column;
 
-
-        public CardsWithIndex(int i_CardId, int i_Row, int i_Column)
+        public CardsLocationOnBoard(int i_CardId, int i_Row, int i_Column)
         {
             m_CardId = i_CardId;
             m_Row = i_Row;
             m_Column = i_Column;
         }
-
 
         public int Id
         {
@@ -26,6 +24,7 @@
                 m_CardId = value; 
             }
         }
+
         public int Row
         {
             get
@@ -37,6 +36,7 @@
                 m_Row = value;
             }
         }
+
         public int Column
         {
             get
@@ -48,6 +48,5 @@
                 m_Column = value; 
             }
         }
-
     }
 }

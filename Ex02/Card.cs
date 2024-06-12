@@ -3,12 +3,12 @@ namespace GameLogics
 {
     public struct Card
     {
-        private int m_CardId;
+        private readonly int r_CardId;
         private eCardStatus m_CardStatus;
 
         public Card(int i_CardId)
         {
-            m_CardId = i_CardId;
+            r_CardId = i_CardId;
             m_CardStatus = eCardStatus.FacedDown;
         }
 
@@ -16,7 +16,7 @@ namespace GameLogics
         {
             get
             {
-                return m_CardId;
+                return r_CardId;
             }
         }
 

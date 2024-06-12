@@ -132,7 +132,7 @@ namespace GameControl
 
             int rowChosen1 = findRowFromIndex(cardIndex1);
             int columnChosen1 = findColFromIndex(cardIndex1);
-            CardsWithIndex cardToFind = new CardsWithIndex(m_Board.Cards[rowChosen1, columnChosen1].Id, rowChosen1, columnChosen1);
+            CardsLocationOnBoard cardToFind = new CardsLocationOnBoard(m_Board.Cards[rowChosen1, columnChosen1].Id, rowChosen1, columnChosen1);
             
             if(Players[m_CurrentPlayerTurn].FindCardInMemory(cardToFind, out int rowChosen2, out int columnChosen2))
             {

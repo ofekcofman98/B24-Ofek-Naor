@@ -5,20 +5,22 @@ namespace GameLogics
     public class Player
     {
         private const int k_AmountOfLastTurnsRemembered = 4;
-        private const int k_OldestItemIndexInList = 0;
+        private const int k_OldestItemIndexInMemoryList = 0;
 
         private string m_PlayerName;
         private int m_Score;
         private bool m_IsComputer;
-        private List<CardsWithIndex> m_ComputerAiMemoryList;
+        private List<CardsLocationOnBoard> m_ComputerAiMemoryList;
+
         public Player(string i_PlayerName, int i_Score, bool i_IsComputer) 
         {
             m_PlayerName = i_PlayerName;
             m_Score = i_Score;
             m_IsComputer = i_IsComputer;
+
             if (i_IsComputer)
             {
-                m_ComputerAiMemoryList = new List<CardsWithIndex>();
+                m_ComputerAiMemoryList = new List<CardsLocationOnBoard>();
             }
             else
             {
@@ -26,47 +28,34 @@ namespace GameLogics
             }
         }
 
-        public List<CardsWithIndex> ComputerAiMemoryList 
-        {
-            get
-            {
-                return m_ComputerAiMemoryList;
-            }
-            set
-            {
-                m_ComputerAiMemoryList = value;
-            }
-        }
-
         public void RememberTurn(int i_CardId, int i_Row, int i_Column)
         {
             if (m_ComputerAiMemoryList.Count == k_AmountOfLastTurnsRemembered)
             {
-                m_ComputerAiMemoryList.RemoveAt(k_OldestItemIndexInList); // Remove the oldest item
+                m_ComputerAiMemoryList.RemoveAt(k_OldestItemIndexInMemoryList); // Remove the oldest item in memory
             }
-            m_ComputerAiMemoryList.Add(new CardsWithIndex(i_CardId, i_Row, i_Column));
+            m_ComputerAiMemoryList.Add(new CardsLocationOnBoard(i_CardId, i_Row, i_Column));
         }
 
-        public bool FindCardInMemory(CardsWithIndex i_CardToFind, out int o_RowChosen, out int o_ColumnChosen)
+        public bool FindCardInMemory(CardsLocationOnBoard i_CardToFind, out int o_RowChosen, out int o_ColumnChosen)
         {
             o_RowChosen = -1;
             o_ColumnChosen = -1;
             bool isInList = false;
 
-            foreach(CardsWithIndex cardWithIndex in m_ComputerAiMemoryList)
+            foreach(CardsLocationOnBoard cardWithLocation in m_ComputerAiMemoryList)
             {
-                if(cardWithIndex.Id == i_CardToFind.Id && (cardWithIndex.Row != i_CardToFind.Row || cardWithIndex.Column != i_CardToFind.Column))
+                if(cardWithLocation.Id == i_CardToFind.Id && (cardWithLocation.Row != i_CardToFind.Row || cardWithLocation.Column != i_CardToFind.Column))
                 {
-                    o_RowChosen = cardWithIndex.Row;
-                    o_ColumnChosen = cardWithIndex.Column;
+                    o_RowChosen = cardWithLocation.Row;
+                    o_ColumnChosen = cardWithLocation.Column;
                     isInList = true;
                 }
             }
 
             return isInList;
         }
-
-
+        
         public string Name
         {
             get

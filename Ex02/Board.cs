@@ -7,13 +7,13 @@ namespace GameLogics
     {
         private int m_NumOfRows;
         private int m_NumOfColumns;
-        private Card[,] m_CardsMatrix;
+        private readonly Card[,] r_CardsMatrix;
 
         public Board(int i_NumOfRows, int i_NumOfColumns, int i_RangeOfIds)
         {
             m_NumOfRows = i_NumOfRows;
             m_NumOfColumns = i_NumOfColumns;
-            m_CardsMatrix = new Card[m_NumOfRows, m_NumOfColumns];
+            r_CardsMatrix = new Card[m_NumOfRows, m_NumOfColumns];
             BoardInitialization(i_RangeOfIds);
         }
 
@@ -21,7 +21,7 @@ namespace GameLogics
         {
             get
             {
-                return m_CardsMatrix;
+                return r_CardsMatrix;
             }
         }
 
@@ -63,7 +63,6 @@ namespace GameLogics
                 idDomainList.Add(i);
             }
 
-
             for (int i = 0; i < numOfUniqueId; i++)
             {
                 int randomIndex = randomGenerator.Next(0, idDomainList.Count);
@@ -82,16 +81,16 @@ namespace GameLogics
             {
                 for (int col = 0; col < m_NumOfColumns; col++)
                 {
-                    m_CardsMatrix[row, col] = new Card(idInGameList[cardId++]);
+                    r_CardsMatrix[row, col] = new Card(idInGameList[cardId++]);
                 }
             }
         }
-
 
         public static void ShuffleList<T>(List<T> i_List)
         {
             Random randomGenerator = new Random();
             int listSize = i_List.Count;
+
             while (listSize > 1) 
             {
                 listSize--;
@@ -99,7 +98,6 @@ namespace GameLogics
                 T tempVariable = i_List[listSize];
                 i_List[listSize] = i_List[randomIndex];
                 i_List[randomIndex] = tempVariable; 
-
             }
         }
     }
